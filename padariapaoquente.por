@@ -3,13 +3,15 @@ programa
 	//	Inclusão de bibliotecas necessárias.
 	inclua biblioteca Arquivos --> arc
 	inclua biblioteca Tipos --> ty
+	inclua biblioteca Texto --> tx
+	inclua biblioteca Util --> ut
 
 	//	Variáveis globais usadas para a programação e manipulação do programa.
 	inteiro menuOption = 0, estoqueProduto[5], contador = 1, quantidadeOperacoes = 0, codigoProduto[5], archiveCode, 
-	archiveStock, archiveName, archiveValue, archiveCost
+	archiveStock, archiveName, archiveValue, archiveCost, textCode, textStock
 	caracter continuar = 's'
 	cadeia nomeProduto[5], textArchive
-	real valorProduto[5], custoProduto[5]
+	real valorProduto[5], custoProduto[5], textValue, textCost
 
 	//	Contantes que contem os caminhos dos bancos de dados.
 	const cadeia codeDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productCodeDB.txt"
@@ -76,7 +78,13 @@ programa
 						}
 					}
 				}enquanto(continuar != 'n')
-				limpa()	
+				arc.fechar_arquivo(archiveCode)
+				arc.fechar_arquivo(archiveName)
+				arc.fechar_arquivo(archiveStock)
+				arc.fechar_arquivo(archiveValue)
+				arc.fechar_arquivo(archiveCost)
+				limpa()
+				inicio()
 			pare
 			caso 2:
 				limpa()
@@ -91,16 +99,41 @@ programa
 				archiveCost = arc.abrir_arquivo(costDB,arc.MODO_LEITURA)
 				
 				faca{
-					para(inteiro i = 0; i < contador; i++){
+					para(inteiro i = 0; i < ut.numero_elementos(codigoProduto); i++){
 						textArchive = arc.ler_linha(archiveCode)
-						codigoProduto[i]= ty.cadeia_para_inteiro(textArchive,10) 
-						nomeProduto[i] = arc.ler_linha(archiveName)
+						se (ty.cadeia_e_inteiro(textArchive, 10) == verdadeiro){
+							textCode = ty.cadeia_para_inteiro(textArchive, 10)
+							codigoProduto[i] = textCode
+						}
+						textArchive = arc.ler_linha(archiveName)
+						nomeProduto[i] = textArchive
 						textArchive = arc.ler_linha(archiveStock)
-						estoqueProduto[i] = ty.cadeia_para_inteiro(textArchive, 10)
+						se (ty.cadeia_e_inteiro(textArchive, 10) == verdadeiro){
+							textStock = ty.cadeia_para_inteiro(textArchive, 10)
+							estoqueProduto[i] = textStock
+						}
 						textArchive = arc.ler_linha(archiveValue)
-						valorProduto[i] = ty.cadeia_para_real(textArchive)
+						se (ty.cadeia_e_real(textArchive) == verdadeiro){
+							textValue = ty.cadeia_para_real(textArchive)
+							valorProduto[i] = textValue
+						}
 						textArchive = arc.ler_linha(archiveCost)
-						custoProduto[i] = ty.cadeia_para_real(textArchive)
+						se (ty.cadeia_e_real(textArchive) == verdadeiro){
+							textCost = ty.cadeia_para_real(textArchive)
+							custoProduto[i] = textCost
+						}
+					contador++
+					}
+					para(inteiro i = 0; i< quantidadeOperacoes; i++){
+						escreva(codigoProduto[i],"|")
+						escreva("\n")
+						escreva(nomeProduto[i],"|")
+						escreva("\n")
+						escreva(estoqueProduto[i],"|")
+						escreva("\n")
+						escreva(valorProduto[i],"|")
+						escreva("\n")
+						escreva(custoProduto[i],"|")
 					}
 					/*se(codigoProduto[0] == 0){
 							escreva("Informe o código do produto: ")
@@ -141,13 +174,6 @@ programa
 				}enquanto(continuar != 'n')
 			pare
 		}
-		para(inteiro i = 0; i< quantidadeOperacoes; i++){
-				escreva(codigoProduto[i],"\n")
-				escreva(nomeProduto[i],"\n")
-				escreva(estoqueProduto[i],"\n")
-				escreva(valorProduto[i],"\n")
-				escreva(custoProduto[i],"\n")
-			}
 	}
 
 	//	Função para imprimir HEADER DO SISTEMA (DESIGN)
@@ -199,9 +225,9 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 4212; 
+ * @POSICAO-CURSOR = 3976; 
  * @PONTOS-DE-PARADA = ;
- * @SIMBOLOS-INSPECIONADOS = {estoqueProduto, 8, 25, 14}-{contador, 8, 44, 8}-{codigoProduto, 8, 83, 13}-{continuar, 10, 10, 9}-{nomeProduto, 11, 8, 11}-{valorProduto, 12, 6, 12}-{custoProduto, 12, 23, 12};
+ * @SIMBOLOS-INSPECIONADOS = {estoqueProduto, 10, 25, 14}-{quantidadeOperacoes, 10, 58, 19}-{codigoProduto, 10, 83, 13}-{nomeProduto, 13, 8, 11}-{valorProduto, 14, 6, 12}-{custoProduto, 14, 23, 12};
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
  * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */
