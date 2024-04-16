@@ -99,14 +99,20 @@ programa
 				archiveCost = arc.abrir_arquivo(costDB,arc.MODO_LEITURA)
 				
 				faca{
-					para(inteiro i = 0; i < ut.numero_elementos(codigoProduto); i++){
+					contador = ut.numero_elementos(codigoProduto)
+					para(inteiro i = 0; i < contador; i++){
 						textArchive = arc.ler_linha(archiveCode)
 						se (ty.cadeia_e_inteiro(textArchive, 10) == verdadeiro){
 							textCode = ty.cadeia_para_inteiro(textArchive, 10)
 							codigoProduto[i] = textCode
+						}senao{
+							pare
 						}
+						inteiro numCaracteres = tx.numero_caracteres(textArchive)
 						textArchive = arc.ler_linha(archiveName)
-						nomeProduto[i] = textArchive
+						se(numCaracteres>0){
+							nomeProduto[i] = textArchive
+						}
 						textArchive = arc.ler_linha(archiveStock)
 						se (ty.cadeia_e_inteiro(textArchive, 10) == verdadeiro){
 							textStock = ty.cadeia_para_inteiro(textArchive, 10)
@@ -122,8 +128,8 @@ programa
 							textCost = ty.cadeia_para_real(textArchive)
 							custoProduto[i] = textCost
 						}
-					contador++
 					}
+					
 					para(inteiro i = 0; i< quantidadeOperacoes; i++){
 						escreva(codigoProduto[i],"|")
 						escreva("\n")
@@ -225,9 +231,9 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 3976; 
+ * @POSICAO-CURSOR = 4244; 
  * @PONTOS-DE-PARADA = ;
- * @SIMBOLOS-INSPECIONADOS = {estoqueProduto, 10, 25, 14}-{quantidadeOperacoes, 10, 58, 19}-{codigoProduto, 10, 83, 13}-{nomeProduto, 13, 8, 11}-{valorProduto, 14, 6, 12}-{custoProduto, 14, 23, 12};
+ * @SIMBOLOS-INSPECIONADOS = {estoqueProduto, 10, 25, 14}-{quantidadeOperacoes, 10, 58, 19}-{codigoProduto, 10, 83, 13}-{nomeProduto, 13, 8, 11}-{textArchive, 13, 24, 11}-{valorProduto, 14, 6, 12}-{custoProduto, 14, 23, 12};
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
  * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */
