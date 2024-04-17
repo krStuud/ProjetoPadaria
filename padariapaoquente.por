@@ -16,7 +16,7 @@ programa
 	inteiro menuOption = 0, estoque, codigo = 0,  contador = 1, quantidadeOperacoes = 0, archiveCode,
 	archiveStock, archiveName, archiveValue, archiveCost, salesArchive, textCode, textStock, codigoV, estoqueV,
 	codeClientlientDirectory,nameClientlientDirectory,valueClientlientDirectory
-	caracter continuar = 's', makeSale = 's', newSale = 's'
+	caracter continuar = 's', makeSale = 'n', newSale = 's'
 	real textValue, textCost, valor, custo, valorV, CustoV
 	cadeia textArchive, nome
 	
@@ -150,11 +150,11 @@ programa
 						leia(codigoV)
 						escreva("Deseja finalizar venda(S/N)? ")
 							leia(makeSale)
-					}enquanto(makeSale != 'n' e makeSale != 'N')
+					}enquanto(makeSale != 's' e makeSale != 'S')
 					escreva("Deseja realizar nova venda(S/N)? ")
-						leia(makeSale)
+						leia(newSale)
 					limpa()
-				}enquanto(newSale != 'n' e newSale != 'N')
+				}enquanto(newSale != 'n')
 			pare
 		}
 	}
@@ -289,7 +289,7 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 5901; 
+ * @POSICAO-CURSOR = 6104; 
  * @DOBRAMENTO-CODIGO = [162, 167, 173, 178, 183, 191, 198, 210, 221, 229, 237, 245, 254, 280];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
