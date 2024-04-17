@@ -6,19 +6,31 @@ programa
 	inclua biblioteca Texto --> tx
 	inclua biblioteca Util --> ut
 
-	//	Variáveis globais usadas para a programação e manipulação do programa.
-	inteiro menuOption = 0, estoqueProduto[5], contador = 1, quantidadeOperacoes = 0, codigoProduto[5], archiveCode, 
+	//	Variáveis globais usadas para a manipulação e alocação "permanente" de dados.
+	inteiro estoqueProduto[5], codigoProduto[5]
+	cadeia nomeProduto[5]
+	real valorProduto[5], custoProduto[5]
+	
+	
+	//	Variáveis globais usadas para a manipulação e alocação temporária de dados.
+	inteiro menuOption = 0, estoque, codigo = 0,  contador = 1, quantidadeOperacoes = 0, archiveCode,
 	archiveStock, archiveName, archiveValue, archiveCost, textCode, textStock
 	caracter continuar = 's'
-	cadeia nomeProduto[5], textArchive
-	real valorProduto[5], custoProduto[5], textValue, textCost
-
+	real textValue, textCost, valor, custo
+	cadeia textArchive, nome
+	
 	//	Contantes que contem os caminhos dos bancos de dados.
-	const cadeia codeDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productCodeDB.txt"
+	/*const cadeia codeDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productCodeDB.txt"
 	const cadeia nameDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productNameDB.txt"
 	const cadeia stockDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productStockDB.txt"
 	const cadeia valueDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productValueDB.txt"
-	const cadeia costDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productCostDB.txt"
+	const cadeia costDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productCostDB.txt"*/
+	
+	const cadeia codeDB = "D:/documents/senai/ProjetoPadaria/database/productCodeDB.txt"
+	const cadeia nameDB = "D:/documents/senai/ProjetoPadaria/database/productNameDB.txt"
+	const cadeia stockDB = "D:/documents/senai/ProjetoPadaria/database/productStockDB.txt"
+	const cadeia valueDB = "D:/documents/senai/ProjetoPadaria/database/productValueDB.txt"
+	const cadeia costDB = "D:/documents/senai/ProjetoPadaria/database/productCostDB.txt"
 	
 
 	//	Função principal do programa.
@@ -39,44 +51,42 @@ programa
 				archiveValue = arc.abrir_arquivo(valueDB,arc.MODO_ACRESCENTAR)
 				archiveCost = arc.abrir_arquivo(costDB,arc.MODO_ACRESCENTAR)
 				faca{
-					para(inteiro i = 0; i < contador; i++){
-						se(codigoProduto[0] == 0){
-							escreva("Informe o código do produto: ")
-							escreva("\nOBS: código iniciado com 0, serão\nvalidados somente números subsequentes\n: ")
-								leia(codigoProduto[i])
-							textArchive = ty.inteiro_para_cadeia(codigoProduto[i],10)
-							arc.escrever_linha(textArchive, archiveCode)
-						}senao{
-							codigoProduto[i]= codigoProduto[i-1] + 1
-							textArchive = ty.inteiro_para_cadeia(codigoProduto[i],10)
-							arc.escrever_linha(textArchive, archiveCode)
-						}
-						escreva("\nInforme o nome do produto: ")
-							leia(nomeProduto[i])
-							textArchive = nomeProduto[i]
-							arc.escrever_linha(textArchive, archiveName)
-						escreva("\nInforme o estoque do produto: ")
-							leia(estoqueProduto[i])
-							textArchive = ty.inteiro_para_cadeia(estoqueProduto[i],10)
-							arc.escrever_linha(textArchive, archiveStock)
-						escreva("\nInforme o valor de venda do produto: R$ ")
-							leia(valorProduto[i])
-							textArchive = ty.real_para_cadeia(valorProduto[i])
-							arc.escrever_linha(textArchive, archiveValue)
-						escreva("\nInforme o custo de produção do produto: R$ ")
-							leia(custoProduto[i])
-							textArchive = ty.real_para_cadeia(custoProduto[i])
-							arc.escrever_linha(textArchive, archiveCost)
-						continuar = continuityCheck(continuar)
-						quantidadeOperacoes++
-						contador++
-						limpa()
-						printHeader()
-						printLine()
-						se(continuar == 'n' ou continuar == 'N'){
-							pare
-						}
+					se(codigo == 0){
+						escreva("Informe o código do produto: ")
+						escreva("\nOBS: código iniciado com 0, serão\nvalidados somente números subsequentes\n: ")
+							leia(codigo)
+						textArchive = ty.inteiro_para_cadeia(codigo,10)
+						arc.escrever_linha(textArchive, archiveCode)
+					}senao{
+						codigo++
+						textArchive = ty.inteiro_para_cadeia(codigo,10)
+						arc.escrever_linha(textArchive, archiveCode)
 					}
+					escreva("\nInforme o nome do produto: ")
+						leia(nome)
+						textArchive = nome
+						arc.escrever_linha(textArchive, archiveName)
+					escreva("\nInforme o estoque do produto: ")
+						leia(estoque)
+						textArchive = ty.inteiro_para_cadeia(estoque,10)
+						arc.escrever_linha(textArchive, archiveStock)
+					escreva("\nInforme o valor de venda do produto: R$ ")
+						leia(valor)
+						textArchive = ty.real_para_cadeia(valor)
+						arc.escrever_linha(textArchive, archiveValue)
+					escreva("\nInforme o custo de produção do produto: R$ ")
+						leia(custo)
+						textArchive = ty.real_para_cadeia(custo)
+						arc.escrever_linha(textArchive, archiveCost)
+					continuar = continuityCheck(continuar)
+					quantidadeOperacoes++
+					contador++
+					limpa()
+					printHeader()
+					printLine()
+					/*se(continuar == 'n' ou continuar == 'N'){
+						pare
+					}*/
 				}enquanto(continuar != 'n')
 				arc.fechar_arquivo(archiveCode)
 				arc.fechar_arquivo(archiveName)
@@ -98,13 +108,15 @@ programa
 				archiveValue = arc.abrir_arquivo(valueDB,arc.MODO_LEITURA)
 				archiveCost = arc.abrir_arquivo(costDB,arc.MODO_LEITURA)
 				
-				faca{
+				//faca{
 					contador = ut.numero_elementos(codigoProduto)
+					quantidadeOperacoes = 0
 					para(inteiro i = 0; i < contador; i++){
 						textArchive = arc.ler_linha(archiveCode)
 						se (ty.cadeia_e_inteiro(textArchive, 10) == verdadeiro){
 							textCode = ty.cadeia_para_inteiro(textArchive, 10)
 							codigoProduto[i] = textCode
+							quantidadeOperacoes++
 						}senao{
 							pare
 						}
@@ -130,17 +142,17 @@ programa
 						}
 					}
 					
+					escreva("| Item | Código | Descrição | Estoque | Preço UN | Custo UN |")
+					escreva("\n")
 					para(inteiro i = 0; i< quantidadeOperacoes; i++){
 						escreva(codigoProduto[i],"|")
-						escreva("\n")
 						escreva(nomeProduto[i],"|")
-						escreva("\n")
 						escreva(estoqueProduto[i],"|")
-						escreva("\n")
 						escreva(valorProduto[i],"|")
-						escreva("\n")
 						escreva(custoProduto[i],"|")
+						escreva("\n")
 					}
+					escreva("Informe o código do produto: ")
 					/*se(codigoProduto[0] == 0){
 							escreva("Informe o código do produto: ")
 							escreva("\nOBS: código iniciado com 0, serão\nvalidados somente números subsequentes\n: ")
@@ -177,7 +189,7 @@ programa
 						se(continuar == 'n' ou continuar == 'N'){
 							pare
 						}*/
-				}enquanto(continuar != 'n')
+				//}enquanto(continuar != 'n')
 			pare
 		}
 	}
@@ -231,9 +243,10 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 4244; 
+ * @POSICAO-CURSOR = 3882; 
+ * @DOBRAMENTO-CODIGO = [197, 203, 208, 234];
  * @PONTOS-DE-PARADA = ;
- * @SIMBOLOS-INSPECIONADOS = {estoqueProduto, 10, 25, 14}-{quantidadeOperacoes, 10, 58, 19}-{codigoProduto, 10, 83, 13}-{nomeProduto, 13, 8, 11}-{textArchive, 13, 24, 11}-{valorProduto, 14, 6, 12}-{custoProduto, 14, 23, 12};
+ * @SIMBOLOS-INSPECIONADOS = {estoque, 16, 25, 7}-{codigo, 16, 34, 6}-{valor, 19, 27, 5}-{custo, 19, 34, 5}-{nome, 20, 21, 4};
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
  * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */
