@@ -14,9 +14,10 @@ programa
 	
 	//	Variáveis globais usadas para a manipulação e alocação temporária de dados.
 	inteiro menuOption = 0, estoque, codigo = 0,  contador = 1, quantidadeOperacoes = 0, archiveCode,
-	archiveStock, archiveName, archiveValue, archiveCost, textCode, textStock
-	caracter continuar = 's'
-	real textValue, textCost, valor, custo
+	archiveStock, archiveName, archiveValue, archiveCost, salesArchive, textCode, textStock, codigoV, estoqueV,
+	codeClientlientDirectory,nameClientlientDirectory,valueClientlientDirectory
+	caracter continuar = 's', makeSale = 's', newSale = 's'
+	real textValue, textCost, valor, custo, valorV, CustoV
 	cadeia textArchive, nome
 	
 	//	Contantes que contem os caminhos dos bancos de dados.
@@ -25,6 +26,10 @@ programa
 	const cadeia stockDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productStockDB.txt"
 	const cadeia valueDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productValueDB.txt"
 	const cadeia costDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productCostDB.txt"
+	const cadeia salesArc = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/salesArchive.txt"
+	const cadeia codeSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/codeProductsSale.txt"
+	const cadeia productSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/productsSale.txt"
+	const cadeia valueSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/valueProductsSale.txt"
 	
 	/*const cadeia codeDB = "D:/documents/senai/ProjetoPadaria/database/productCodeDB.txt"
 	const cadeia nameDB = "D:/documents/senai/ProjetoPadaria/database/productNameDB.txt"
@@ -136,46 +141,20 @@ programa
 						custoProduto[i] = textCost
 					}
 				}
-				
-				print_products()
-				escreva("Informe o código do produto: ")
-					
-					/*se(codigoProduto[0] == 0){
-							escreva("Informe o código do produto: ")
-							escreva("\nOBS: código iniciado com 0, serão\nvalidados somente números subsequentes\n: ")
-								leia(codigoProduto[i])
-							textArchive = ty.inteiro_para_cadeia(codigoProduto[i],10)
-							arc.escrever_linha(textArchive, archiveCode)
-						}senao{
-							codigoProduto[i]= codigoProduto[i-1] + 1
-							textArchive = ty.inteiro_para_cadeia(codigoProduto[i],10)
-							arc.escrever_linha(textArchive, archiveCode)
-						}
-						escreva("\nInforme o nome do produto: ")
-							leia(nomeProduto[i])
-							textArchive = nomeProduto[i]
-							arc.escrever_linha(textArchive, archiveName)
-						escreva("\nInforme o estoque do produto: ")
-							leia(estoqueProduto[i])
-							textArchive = ty.inteiro_para_cadeia(estoqueProduto[i],10)
-							arc.escrever_linha(textArchive, archiveStock)
-						escreva("\nInforme o valor de venda do produto: R$ ")
-							leia(valorProduto[i])
-							textArchive = ty.real_para_cadeia(valorProduto[i])
-							arc.escrever_linha(textArchive, archiveValue)
-						escreva("\nInforme o custo de produção do produto: R$ ")
-							leia(custoProduto[i])
-							textArchive = ty.real_para_cadeia(custoProduto[i])
-							arc.escrever_linha(textArchive, archiveCost)
-						continuar = continuityCheck(continuar)
-						quantidadeOperacoes++
-						contador++
-						limpa()
-						printHeader()
-						printLine()
-						se(continuar == 'n' ou continuar == 'N'){
-							pare
-						}*/
+				faca{
+					print_products()
+					escreva("| Informe o código do produto desejado   |\n")
+					print_line_4_options()
+					escreva(": ")
+					faca{
+						leia(codigoV)
+						escreva("Deseja finalizar venda(S/N)? ")
+							leia(makeSale)
+					}enquanto(makeSale != 'n' e makeSale != 'N')
+					escreva("Deseja realizar nova venda(S/N)? ")
+						leia(makeSale)
+					limpa()
+				}enquanto(newSale != 'n' e newSale != 'N')
 			pare
 		}
 	}
@@ -310,8 +289,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 1888; 
- * @DOBRAMENTO-CODIGO = [183, 194, 199, 219, 231, 242, 250, 258, 266, 301];
+ * @POSICAO-CURSOR = 5901; 
+ * @DOBRAMENTO-CODIGO = [162, 167, 173, 178, 183, 191, 198, 210, 221, 229, 237, 245, 254, 280];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
