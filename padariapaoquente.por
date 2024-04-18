@@ -16,12 +16,12 @@ programa
 	//	Variáveis globais usadas para a manipulação e alocação temporária de dados.
 	inteiro menuOption = 0, estoque, codigo = 0,  contador = 1, quantidadeOperacoes = 0, archiveCode,
 	archiveStock, archiveName, archiveValue, archiveCost, salesArchive, textCode, textStock, codigoV, estoqueV,
-	codeClientlientDirectory,nameClientlientDirectory,valueClientlientDirectory, salesMade = 0, positionProduct,
-	numCaracteres
+	codeClientlientDirectory,nameClientlientDirectory,valueClientlientDirectory, salesMade = 0, numCaracteres,
+	clientValue = 1
 				
 	caracter continuar = 's', makeSale = 'n', newSale = 's'
 	real textValue, textCost, valor, custo, valorVendaRealizada = 0.0, CustoV
-	cadeia textArchive, nome, nameChecker, codeChecker
+	cadeia textArchive, nome, clientName = "", salesInformation = "", salesHour = ""
 	
 	//	Contantes que contem os caminhos dos bancos de dados.
 	const cadeia codeDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productCodeDB.txt"
@@ -33,6 +33,7 @@ programa
 	const cadeia codeSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/codeProductsSale.txt"
 	const cadeia productSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/productsSale.txt"
 	const cadeia valueSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/valueProductsSale.txt"
+	const cadeia salesDBDirectory = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/"
 	
 	/*const cadeia codeDB = "D:/documents/senai/ProjetoPadaria/database/productCodeDB.txt"
 	const cadeia nameDB = "D:/documents/senai/ProjetoPadaria/database/productNameDB.txt"
@@ -205,32 +206,41 @@ programa
 				}
 				faca{
 					faca{
+					clientName = salesDBDirectory + "Cliente" + clientValue
+					arc.criar_pasta(clientName)
+					salesInformation = clientName + "/salesInformation.txt"
+					salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ESCRITA)
+					arc.escrever_linha("informação aqui", salesArchive)
+					arc.fechar_arquivo(salesArchive)
 					print_products()
 					escreva("| Informe o código do produto desejado   |\n")
 					print_line_4_options()
 					escreva(": ")
 						leia(codigoV)
-						para(inteiro i = 0; i < arraySize; i++){
-							se(codigoProduto[i]==codigoV){
-								positionProduct = i
-								salesMade++
-							}
-						}
+
+						salesSum(valorVendaRealizada)
+						
 						para(inteiro j = 0; j < salesMade; j++){
 							escreva("\n| Produto | ")
 							escreva(nomeProduto[j]," | ")
 							escreva("\n| Valor | ")
 							escreva(valorProduto[j]," |")
-							valorVendaRealizada+=valorProduto[j]
 							escreva(valorVendaRealizada)
 						}
-						escreva("\nDeseja finalizar venda(S/N)? ")
+						escreva("\n")
+						print_line_4_options()
+						escreva("|      Deseja finalizar venda(S/N)?      | \n")
+						print_line_4_options()
+						escreva(": ")
 							leia(makeSale)
+						limpa()
 					}enquanto(makeSale != 's' e makeSale != 'S')
-					escreva("Deseja realizar nova venda(S/N)? ")
+					escreva("| Deseja realizar nova venda(S/N)? ")
 						leia(newSale)
+					valorVendaRealizada = 0.0
+					clientValue++
 					limpa()
-				}enquanto(newSale != 'n')
+				}enquanto(newSale != 'n' e newSale != 'N')
 			pare
 		}
 	}
@@ -272,6 +282,7 @@ programa
 		print_line_4_options()
 	}
 
+	// Função para imprimir produtos vendidos (DESIGN)
 	funcao vazio print_products(){
 		print_line_4_options()
 		escreva("| Item | Código | Descrição|             |\n")
@@ -283,7 +294,8 @@ programa
 		}
 		print_line_4_options()
 	}
-	
+
+	// Função para imprimir a opção de requisição do código (DESIGN)
 	funcao vazio print_code_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
@@ -295,6 +307,7 @@ programa
 		escreva(": ")
 	}
 
+	// Função para imprimir a opção de requisição do nome do produto (DESIGN)
 	funcao vazio print_name_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
@@ -302,7 +315,8 @@ programa
 		print_line_4_options()
 		escreva(": ")
 	}
-	
+
+	// Função para imprimir a opção de requisição do estoque do produto (DESIGN)
 	funcao vazio print_stock_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
@@ -310,7 +324,8 @@ programa
 		print_line_4_options()
 		escreva(": ")
 	}
-	
+
+	// Função para imprimir a opção de requisição do valor do produto (DESIGN)
 	funcao vazio print_value_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
@@ -318,13 +333,36 @@ programa
 		print_line_4_options()
 		escreva("R$ ")
 	}
-	
+
+	// Função para imprimir a opção de requisição do custo do produto (DESIGN)
 	funcao vazio print_cost_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
 		escreva("|        Informe o custo do produto      | \n")
 		print_line_4_options()
 		escreva("R$ ")
+	}
+
+	funcao vazio print_tax_coupon(){
+		escreva("	     PADOCA PÃO QUENTE LTDA.\nQuadra 1005 Sul Alameda 23 - Plano Diretor Sul"
+			+ "\n77.018-530 Palmas-TO\nCNPJ: 15.688.333/0001-22\nIE: 776537563\nIM: ISENTO"
+			+"\n================================================="
+			+"\nCÓDIGO: VARCÓDIGO\nDATA E HORA: VARDATA-HORA"
+			+"\n================================================="
+			+"\n	         CUPOM SEM VALOR FISCAL"
+			+"\n ================================================"
+			+"\n| ITEM | CÓDIGO | DESCRIÇÃO 		| VALOR |"
+			+"\n|  I++ |  VARCODIGO 	|	VA		|	|"
+			+"\n ================================================"
+			+"\n|TOTAL R$                                 254.46|"
+			+"\n|FORMA DE PAGAMENTO                    VALOR REAL"
+			+"\n ==============================================="
+			+"\n|Impostos:		                        |"
+			+"\n|Imposto é roubo!                               |"
+			+"\n|		                                |"
+			+"\n|		                                |"
+			+"\n ==============================================="
+			+"\n          VÁ PELA SOMBRA E VOLTE SEMPRE!!         \n")
 	}
 	
 	//	Função que mostra o menu para o usuário e retorna a opção selecionada do mesmo. (DESIGN E INTERAÇÃO)
@@ -359,15 +397,29 @@ programa
 			leia(continue)
 		retorne continue
 	}
+
+	//	Função que gerencia o valor total da venda e a quantidade de item vendida
+	funcao real salesSum(real totalValueSales){
+		para(inteiro i = 0; i < arraySize; i++){
+			se(codigoProduto[i]==codigoV){
+				valor = valorProduto[i]
+				valorVendaRealizada+=valorProduto[i]
+				salesMade++
+			}
+		}
+		retorne totalValueSales
+	}
+	
 }
 /* $$$ Portugol Studio $$$ 
  * 
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 7154; 
+ * @POSICAO-CURSOR = 13093; 
+ * @DOBRAMENTO-CODIGO = [248, 253, 259, 269, 277, 285, 298, 310, 319, 328, 368, 394, 401];
  * @PONTOS-DE-PARADA = ;
- * @SIMBOLOS-INSPECIONADOS = ;
+ * @SIMBOLOS-INSPECIONADOS = {nomeProduto, 11, 8, 11}-{valorProduto, 12, 6, 12}-{salesMade, 19, 78, 9}-{valorVendaRealizada, 23, 41, 19};
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
  * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */
