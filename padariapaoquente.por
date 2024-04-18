@@ -10,19 +10,21 @@ programa
 	inteiro estoqueProduto[5], codigoProduto[5]
 	cadeia nomeProduto[5]
 	real valorProduto[5], custoProduto[5]
-	
+	inteiro arraySize = ut.numero_elementos(codigoProduto)/*	Variável auxiliar 
+					que guarda o tamanho do vetor*/
 	
 	//	Variáveis globais usadas para a manipulação e alocação temporária de dados.
 	inteiro menuOption = 0, estoque, codigo = 0,  contador = 1, quantidadeOperacoes = 0, archiveCode,
 	archiveStock, archiveName, archiveValue, archiveCost, salesArchive, textCode, textStock, codigoV, estoqueV,
 	codeClientlientDirectory,nameClientlientDirectory,valueClientlientDirectory, salesMade = 0, positionProduct,
 	numCaracteres
+				
 	caracter continuar = 's', makeSale = 'n', newSale = 's'
-	real textValue, textCost, valor, custo, valorV, CustoV
+	real textValue, textCost, valor, custo, valorVendaRealizada = 0.0, CustoV
 	cadeia textArchive, nome, nameChecker, codeChecker
 	
 	//	Contantes que contem os caminhos dos bancos de dados.
-	/*const cadeia codeDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productCodeDB.txt"
+	const cadeia codeDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productCodeDB.txt"
 	const cadeia nameDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productNameDB.txt"
 	const cadeia stockDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productStockDB.txt"
 	const cadeia valueDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productValueDB.txt"
@@ -30,16 +32,16 @@ programa
 	const cadeia salesArc = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/salesArchive.txt"
 	const cadeia codeSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/codeProductsSale.txt"
 	const cadeia productSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/productsSale.txt"
-	const cadeia valueSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/valueProductsSale.txt"*/
+	const cadeia valueSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/valueProductsSale.txt"
 	
-	const cadeia codeDB = "D:/documents/senai/ProjetoPadaria/database/productCodeDB.txt"
+	/*const cadeia codeDB = "D:/documents/senai/ProjetoPadaria/database/productCodeDB.txt"
 	const cadeia nameDB = "D:/documents/senai/ProjetoPadaria/database/productNameDB.txt"
 	const cadeia stockDB = "D:/documents/senai/ProjetoPadaria/database/productStockDB.txt"
 	const cadeia valueDB = "D:/documents/senai/ProjetoPadaria/database/productValueDB.txt"
 	const cadeia costDB = "D:/documents/senai/ProjetoPadaria/database/productCostDB.txt"
 	const cadeia codeSale = "D:/documents/senai/ProjetoPadaria/database/saleDB/codeProductsSale.txt"
 	const cadeia nameSale = "D:/documents/senai/ProjetoPadaria/database/saleDB/ProductsSale.txt"
-	const cadeia valueSale = "D:/documents/senai/ProjetoPadaria/database/saleDB/valueProductsSale.txt"
+	const cadeia valueSale = "D:/documents/senai/ProjetoPadaria/database/saleDB/valueProductsSale.txt"*/
 
 	
 	
@@ -61,11 +63,9 @@ programa
 				
 				archiveCode = arc.abrir_arquivo(codeDB,arc.MODO_LEITURA)
 				archiveName = arc.abrir_arquivo(nameDB, arc.MODO_LEITURA)
-				contador = ut.numero_elementos(codigoProduto)/*	Variável auxiliar 
-				que guarda o tamanho do vetor*/
 
 				//	Laço para armazenar os dados existentes no BD, em um vetor (TEMPORARIAMENTE)
-				para(inteiro i = 0; i < contador; i++){
+				para(inteiro i = 0; i < arraySize; i++){
 					textArchive = arc.ler_linha(archiveCode)
 					se (ty.cadeia_e_inteiro(textArchive, 10) == verdadeiro){
 						textCode = ty.cadeia_para_inteiro(textArchive, 10)
@@ -76,7 +76,7 @@ programa
 				}
 
 				//	Laço para armazenar os dados existentes no BD, em um vetor (TEMPORARIAMENTE)
-				para(inteiro i = 0; i < contador; i++){
+				para(inteiro i = 0; i < arraySize; i++){
 					textArchive = arc.ler_linha(archiveName)
 					nomeProduto[i] = textArchive
 				}
@@ -89,7 +89,7 @@ programa
 						print_code_request_option()
 							leia(codigo)
 						//	Laço de verificação de existência do código informado pelo usuário no BD
-						para(inteiro i = 0; i < contador; i++){
+						para(inteiro i = 0; i < arraySize; i++){
 							se(codigoProduto[i] == codigo){
 								escreva("Este código já se encontra cadastrado,"
 								+ "informe um novo código\n: ")
@@ -116,7 +116,7 @@ programa
 					print_name_request_option()
 						leia(nome)
 					//	Laço de verificação de existência do produtoo informado pelo usuário no BD
-					para(inteiro i = 0; i < contador; i++){
+					para(inteiro i = 0; i < arraySize; i++){
 						se(nomeProduto[i] == nome){
 							escreva("Este produto já existe no sistema,"
 							+ "informe um novo produto\n: ")
@@ -171,12 +171,14 @@ programa
 				archiveValue = arc.abrir_arquivo(valueDB,arc.MODO_LEITURA)
 				archiveCost = arc.abrir_arquivo(costDB,arc.MODO_LEITURA)
 				quantidadeOperacoes = 0
-				para(inteiro i = 0; i < contador; i++){
+				contador = 0
+				para(inteiro i = 0; i < arraySize; i++){
 					textArchive = arc.ler_linha(archiveCode)
 					se (ty.cadeia_e_inteiro(textArchive, 10) == verdadeiro){
 						textCode = ty.cadeia_para_inteiro(textArchive, 10)
 						codigoProduto[i] = textCode
 						quantidadeOperacoes++
+						contador++
 					}senao{
 						pare
 					}
@@ -202,13 +204,13 @@ programa
 					}
 				}
 				faca{
+					faca{
 					print_products()
 					escreva("| Informe o código do produto desejado   |\n")
 					print_line_4_options()
 					escreva(": ")
-					faca{
 						leia(codigoV)
-						para(inteiro i = 0; i < ut.numero_elementos(codigoProduto); i++){
+						para(inteiro i = 0; i < arraySize; i++){
 							se(codigoProduto[i]==codigoV){
 								positionProduct = i
 								salesMade++
@@ -219,6 +221,8 @@ programa
 							escreva(nomeProduto[j]," | ")
 							escreva("\n| Valor | ")
 							escreva(valorProduto[j]," |")
+							valorVendaRealizada+=valorProduto[j]
+							escreva(valorVendaRealizada)
 						}
 						escreva("\nDeseja finalizar venda(S/N)? ")
 							leia(makeSale)
@@ -272,7 +276,7 @@ programa
 		print_line_4_options()
 		escreva("| Item | Código | Descrição|             |\n")
 		print_line_4_options()
-		para(inteiro i = 0; i< quantidadeOperacoes; i++){
+		para(inteiro i = 0; i< contador; i++){
 			escreva("|  ",(i+1),"   |   ",codigoProduto[i],"  | ")
 			escreva(nomeProduto[i])
 			escreva("\n")
@@ -361,7 +365,7 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 6698; 
+ * @POSICAO-CURSOR = 7154; 
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
