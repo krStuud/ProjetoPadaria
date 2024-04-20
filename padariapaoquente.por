@@ -1,6 +1,6 @@
 programa
 {
-	//	Inclusão de bibliotecas necessárias.
+	//	Inclusao de bibliotecas necessarias.
 	inclua biblioteca Arquivos --> arc
 	inclua biblioteca Calendario --> cad
 	inclua biblioteca Matematica --> math
@@ -8,14 +8,14 @@ programa
 	inclua biblioteca Texto --> tx
 	inclua biblioteca Util --> utl
 
-	//	Variáveis globais usadas para a manipulação e alocação "permanente" de dados.
+	//	Variaveis globais usadas para a manipulacao e alocacao "permanente" de dados.
 	inteiro estoqueProduto[9999], codigoProduto[9999],
-	arraySize = utl.numero_elementos(codigoProduto)/*	Variável auxiliar 
+	arraySize = utl.numero_elementos(codigoProduto)/*	Variavel auxiliar 
 					que guarda o tamanho do vetor*/
 	cadeia nomeProduto[9999]
 	real valorProduto[9999], custoProduto[9999]
 	
-	//	Variáveis globais usadas para a manipulação e alocação temporária de dados.
+	//	Variaveis globais usadas para a manipulacao e alocação temporária de dados.
 	cadeia textArchive, nome, clientName = "", salesInformation = "", taxReceipt = ""
 	inteiro menuOption = 0, estoque, codigo = 0,  contador = 1, quantidadeOperacoes = 0, archiveCode,
 	archiveStock, archiveName, archiveValue, archiveCost, salesArchive, textCode, textStock, codigoV, estoqueVenda = 0,
@@ -23,8 +23,8 @@ programa
 	clientValue = 1
 	real textValue, textCost, valor, custo, valorVendaRealizada = 0.0,retiradaEstoque = 0.0, CustoV
 	
-	/*	Variáveis globais de auxílio na obtenção de dados e gerenciamento de estruturas de dados
-	(data, tempo, geração de códigos aleatórios,loops, etc...)*/
+	/*	Variaveis globais de auxilio na obtencao de dados e gerenciamento de estruturas de dados
+	(data, tempo, geracao de codigos aleatorios,loops, etc...)*/
 	cadeia  salesDate = "", minuteCad
 	caracter continuar = 's', makeSale = 'n', newSale = 's'
 	inteiro clientCode = utl.sorteia(1000, 2000), minute
@@ -56,7 +56,7 @@ programa
 	
 	
 
-	//	Função principal do programa.
+	//	Funcao principal do programa.
 	funcao inicio()
 	{
 		menuOption = mainMenu(menuOption)
@@ -64,9 +64,7 @@ programa
 			//	Cadastro de produtos
 			caso 1:
 				limpa()
-				//	Inicialização dos diretórios dos BD
-				/*archiveCode = arc.abrir_arquivo(codeDB,arc.MODO_ACRESCENTAR)
-				archiveName = arc.abrir_arquivo(nameDB,arc.MODO_ACRESCENTAR)*/
+				//	Inicializacao dos diretorios dos BD
 				archiveStock = arc.abrir_arquivo(stockDB,arc.MODO_ACRESCENTAR)
 				archiveValue = arc.abrir_arquivo(valueDB,arc.MODO_ACRESCENTAR)
 				archiveCost = arc.abrir_arquivo(costDB,arc.MODO_ACRESCENTAR)
@@ -74,7 +72,7 @@ programa
 				archiveCode = arc.abrir_arquivo(codeDB,arc.MODO_LEITURA)
 				archiveName = arc.abrir_arquivo(nameDB, arc.MODO_LEITURA)
 
-				//	Laço para armazenar os dados existentes no BD, em um vetor (TEMPORARIAMENTE)
+				//	Laco para armazenar os dados existentes no BD, em um vetor (TEMPORARIAMENTE)
 				para(inteiro i = 0; i < arraySize; i++){
 					textArchive = arc.ler_linha(archiveCode)
 					se (ty.cadeia_e_inteiro(textArchive, 10) == verdadeiro){
@@ -85,7 +83,7 @@ programa
 					}
 				}
 
-				//	Laço para armazenar os dados existentes no BD, em um vetor (TEMPORARIAMENTE)
+				//	Laco para armazenar os dados existentes no BD, em um vetor (TEMPORARIAMENTE)
 				para(inteiro i = 0; i < arraySize; i++){
 					textArchive = arc.ler_linha(archiveName)
 					nomeProduto[i] = textArchive
@@ -95,26 +93,26 @@ programa
 
 				//	*SISTEMA DE CADASTRO DOS PRODUTOS*
 				faca{
-					se(codigo == 0){ //	Condicional que testa a existência de um código inicial
+					se(codigo == 0){ //	Condicional que testa a existencia de um codigo inicial
 						print_code_request_option()
 							leia(codigo)
-						//	Laço de verificação de existência do código informado pelo usuário no BD
+						//	Lacao de verificacao de existencia do codigo informado pelo usuário no BD
 						para(inteiro i = 0; i < arraySize; i++){
 							se(codigoProduto[i] == codigo){
-								escreva("Este código já se encontra cadastrado,"
+								escreva("Este código já｡ se encontra cadastrado,"
 								+ "informe um novo código\n: ")
 									leia(codigo)
 								i--
 							}
 						}
 
-						//	Inserção do código no BD
+						//	Insercao do codigo no BD
 						archiveCode = arc.abrir_arquivo(codeDB,arc.MODO_ACRESCENTAR)
 						textArchive = ty.inteiro_para_cadeia(codigo,10)
 						arc.escrever_linha(textArchive, archiveCode)
 						arc.fechar_arquivo(archiveCode)
 					}senao{
-						//	Inserção do código no BD
+						//	Insercao do codigo no BD
 						archiveCode = arc.abrir_arquivo(codeDB,arc.MODO_ACRESCENTAR)
 						codigo++
 						textArchive = ty.inteiro_para_cadeia(codigo,10)
@@ -125,7 +123,7 @@ programa
 					
 					print_name_request_option()
 						leia(nome)
-					//	Laço de verificação de existência do produtoo informado pelo usuário no BD
+					//	Laﾃｧo de verificacao de existencia do produto informado pelo usuario no BD
 					para(inteiro i = 0; i < arraySize; i++){
 						se(nomeProduto[i] == nome){
 							escreva("Este produto já existe no sistema,"
@@ -134,36 +132,36 @@ programa
 							i--
 						}
 					}
-					//	Inserção do produto no BD
+					//	Insercao do produto no BD
 					archiveName = arc.abrir_arquivo(nameDB, arc.MODO_ACRESCENTAR)
 					arc.escrever_linha(nome, archiveCode)
 					arc.fechar_arquivo(archiveName)
 					limpa()
 
-					//	Inserção da quantidade no BD
+					//	Insercao da quantidade no BD
 					print_stock_request_option()
 						leia(estoque)
 					textArchive = ty.inteiro_para_cadeia(estoque,10)
 					arc.escrever_linha(textArchive, archiveStock)
 					limpa()
 
-					//	Inserção do valor no BD
+					//	Insercao do valor no BD
 					print_value_request_option()
 						leia(valor)
 					textArchive = ty.real_para_cadeia(valor)
 					arc.escrever_linha(textArchive, archiveValue)
 					limpa()
 
-					//	Inserção do custo no BD
+					//	Insercao do custo no BD
 					print_cost_request_option()
 						leia(custo)
 					textArchive = ty.real_para_cadeia(custo)
 					arc.escrever_linha(textArchive, archiveCost)
 
-					//	Função que verifica se o usuário quer realizar um novo cadastro
+					//	Função que verifica se o usuario quer realizar um novo cadastro
 					continuar = continuityCheck(continuar)
 					limpa()
-				}enquanto(continuar != 'n' e continuar != 'N') //	Condição do laço do sistema de cadastro
+				}enquanto(continuar != 'n' e continuar != 'N') //	Condicao do laco do sistema de cadastro
 				//	Fechando os BD
 				arc.fechar_arquivo(archiveStock)
 				arc.fechar_arquivo(archiveValue)
@@ -174,7 +172,7 @@ programa
 			pare
 			caso 2:
 				limpa()
-				print_sales_screen() //	Impressão da tela
+				print_sales_screen() //	Impressao da tela
 				databaseAccess() //	Acesso ao banco de dados
 
 				//	**SISTEMA DE VENDAS**
@@ -185,7 +183,7 @@ programa
 					faca{
 					salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ESCRITA)
 					print_products()
-					escreva("| Informe o código do produto desejado   |\n")
+					escreva("| Informe o cﾃｳdigo do produto desejado   |\n")
 					print_line_4_options()
 					escreva(": ")
 						leia(codigoV)
@@ -218,12 +216,12 @@ programa
 	//	Função para imprimir HEADER DO SISTEMA (DESIGN)
 	funcao vazio print_header(){
 		escreva(" _________________________________\n")
-		escreva("|         Padoca PÃO QUENTE       |\n")
+		escreva("|         Padoca Pﾃグ QUENTE       |\n")
 	}
 
 	funcao vazio print_header_functions_screen(){
 		escreva(" ________________________________________\n")
-		escreva("|            Padoca PÃO QUENTE           |\n")
+		escreva("|            Padoca Pﾃグ QUENTE           |\n")
 	}
 
 	//	Função para imprimir linha (DESIGN)
@@ -255,7 +253,7 @@ programa
 	// Função para imprimir produtos vendidos (DESIGN)
 	funcao vazio print_products(){
 		print_line_4_options()
-		escreva("| Item | Código | Descrição|             |\n")
+		escreva("| Item | Cﾃｳdigo | Descriﾃｧﾃ｣o|             |\n")
 		print_line_4_options()
 		para(inteiro i = 0; i< contador; i++){
 			escreva("|  ",(i+1),"   |   ",codigoProduto[i],"  | ")
@@ -265,19 +263,19 @@ programa
 		print_line_4_options()
 	}
 
-	// Função para imprimir a opção de requisição do código (DESIGN)
+	// Funcao para imprimir a opcao de requisicao do codigo (DESIGN)
 	funcao vazio print_code_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
-		escreva("|      Informe o código do produto       |\n")
+		escreva("|      Informe o cﾃｳdigo do produto       |\n")
 		print_line_4_options()
-		escreva("| OBS: código iniciado com 0, serão      |"
-		+"\n| validados somente números subsequentes | \n")
+		escreva("| OBS: cﾃｳdigo iniciado com 0, serﾃ｣o      |"
+		+"\n| validados somente nﾃｺmeros subsequentes | \n")
 		print_line_4_options()
 		escreva(": ")
 	}
 
-	// Função para imprimir a opção de requisição do nome do produto (DESIGN)
+	// Funcao para imprimir a opcao de requisicao do nome do produto (DESIGN)
 	funcao vazio print_name_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
@@ -286,7 +284,7 @@ programa
 		escreva(": ")
 	}
 
-	// Função para imprimir a opção de requisição do estoque do produto (DESIGN)
+	// Funcao para imprimir a opcao de requisicao do estoque do produto (DESIGN)
 	funcao vazio print_stock_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
@@ -295,7 +293,7 @@ programa
 		escreva(": ")
 	}
 
-	// Função para imprimir a opção de requisição do valor do produto (DESIGN)
+	// Funcao para imprimir a opcao de requisicao do valor do produto (DESIGN)
 	funcao vazio print_value_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
@@ -304,7 +302,7 @@ programa
 		escreva("R$ ")
 	}
 
-	// Função para imprimir a opção de requisição do custo do produto (DESIGN)
+	// Funcao para imprimir a opcao de requisicao do custo do produto (DESIGN)
 	funcao vazio print_cost_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
@@ -313,17 +311,17 @@ programa
 		escreva("R$ ")
 	}
 
-	// FUNCIONALIDADE EM CONSTRUÇÃO
-	//	Função de impressão do cumpom fiscal
+	// FUNCIONALIDADE EM CONSTRUCAO
+	//	Funﾃｧﾃ｣o de impressﾃ｣o do cumpom fiscal
 	/*funcao vazio print_tax_coupon(){
-		escreva("	     PADOCA PÃO QUENTE LTDA.\nQuadra 1005 Sul Alameda 23 - Plano Diretor Sul"
+		escreva("	     PADOCA Pﾃグ QUENTE LTDA.\nQuadra 1005 Sul Alameda 23 - Plano Diretor Sul"
 			+ "\n77.018-530 Palmas-TO\nCNPJ: 15.688.333/0001-22\nIE: 776537563\nIM: ISENTO"
 			+"\n================================================"
-			+"\nCÓDIGO: "+clientCode+"\nDATA E HORA: "+ obtainingTimetable()
+			+"\nCﾃ泥IGO: "+clientCode+"\nDATA E HORA: "+ obtainingTimetable()
 			+"\n================================================"
 			+"\n	      CUPOM SEM VALOR FISCAL"
 			+"\n================================================"
-			+"\n| ITEM | CÓDIGO | DESCRIÇÃO..........|  VALOR  |")
+			+"\n| ITEM | Cﾃ泥IGO | DESCRIﾃ�ﾃグ..........|  VALOR  |")
 			para(inteiro i = 0; i < 5; i++){
 				se(tx.numero_caracteres(nomeProduto[i])< 4){
 					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) <4){
@@ -388,7 +386,7 @@ programa
 					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
 						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"            | "+valorProduto[i]+"|")//11
 					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 9){//macarrão
+				}senao se(tx.numero_caracteres(nomeProduto[i])< 9){//macarrﾃ｣o
 					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
 						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"           |     "+valorProduto[i]+"0|")//10
 					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
@@ -588,40 +586,40 @@ programa
 			}
 			escreva("\n================================================"
 			+"\n|Impostos:		                       |"
-			+"\n|Imposto é roubo!                              |"
+			+"\n|Imposto ﾃｩ roubo!                              |"
 			+"\n|		                               |"
 			+"\n|		                               |"
 			+"\n================================================"
-			+"\n         VÁ PELA SOMBRA E VOLTE SEMPRE!!         \n")
+			+"\n         Vﾃ� PELA SOMBRA E VOLTE SEMPRE!!         \n")
 	}
 
 	*/
 
-	// FUNCIONALIDADE EM CONSTRUÇÃO
+	// FUNCIONALIDADE EM CONSTRUCAO
 	/*funcao cadeia print_tax_receipt(){
 		cadeia aux = +", "+
 		retorne aux
 	}*/
 	
-	//	Função que mostra o menu para o usuário e retorna a opção selecionada do mesmo. (DESIGN E INTERAÇÃO)
+	//	Funcao que mostra o menu para o usuario e retorna a opcao selecionada do mesmo. (DESIGN E INTERACAO)
 	funcao inteiro mainMenu(inteiro menuOption){
 		print_header()
 		print_line()
-		escreva("| Escolha a opção desejada abaixo |")
+		escreva("| Escolha a opﾃｧﾃ｣o desejada abaixo |")
 		escreva("\n")
 		print_line()
-		escreva(" [1]- Cadastrar Produto \n [2]- Realizar Venda \n [3]- Relatório Atual \n [4]- Fechamento de Caixa")
+		escreva(" [1]- Cadastrar Produto \n [2]- Realizar Venda \n [3]- Relatﾃｳrio Atual \n [4]- Fechamento de Caixa")
 		escreva("\n: ")
 			leia(menuOption)
 		enquanto(menuOption <1 ou menuOption >4){
 			limpa()
 			print_header()
 			print_line()
-			escreva("| OPÇÃO INVÁLIDA!                 |\n")
-			escreva("| Escolha uma opção válida abaixo |")
+			escreva("| OPﾃ�ﾃグ INVﾃ´IDA!                 |\n")
+			escreva("| Escolha uma opﾃｧﾃ｣o vﾃ｡lida abaixo |")
 			escreva("\n")
 			print_line()
-			escreva(" [1]- Cadastrar Produto \n [2]- Realizar Venda \n [3]- Relatório Atual \n [4]- Fechamento de Caixa")
+			escreva(" [1]- Cadastrar Produto \n [2]- Realizar Venda \n [3]- Relatﾃｳrio Atual \n [4]- Fechamento de Caixa")
 			escreva("\n: ")
 				leia(menuOption)
 		}
@@ -629,20 +627,21 @@ programa
 		retorne menuOption
 	}
 
-	//	Função de verificação de continuidade do usuário.
+	//	Funcao de verificacao de continuidade do usuario.
 	funcao caracter continuityCheck(caracter continue){
 		escreva("Deseja cadastrar um novo produto (S/N)? ")
 			leia(continue)
 		retorne continue
 	}
 
-	//	Função da funcionalidade de vendas que acessa as databases e extrai os dados necessários
+	//	Funcao da funcionalidade de vendas que acessa as databases e extrai os dados necessarios
 	funcao vazio databaseAccess(){
 		archiveCode = arc.abrir_arquivo(codeDB,arc.MODO_LEITURA)
 		archiveName = arc.abrir_arquivo(nameDB,arc.MODO_LEITURA)
-		archiveStock = arc.abrir_arquivo(stockDB,arc.MODO_LEITURA)
+		
 		archiveValue = arc.abrir_arquivo(valueDB,arc.MODO_LEITURA)
 		archiveCost = arc.abrir_arquivo(costDB,arc.MODO_LEITURA)
+		archiveStock = arc.abrir_arquivo(stockDB,arc.MODO_LEITURA)
 		quantidadeOperacoes = 0
 		contador = 0
 		para(inteiro i = 0; i < arraySize; i++){
@@ -660,11 +659,13 @@ programa
 			se(numCaracteres>0){
 				nomeProduto[i] = textArchive
 			}
+			
 			textArchive = arc.ler_linha(archiveStock)
 			se (ty.cadeia_e_inteiro(textArchive, 10) == verdadeiro){
 				textStock = ty.cadeia_para_inteiro(textArchive, 10)
 				estoqueProduto[i] = textStock
 			}
+			
 			textArchive = arc.ler_linha(archiveValue)
 			se (ty.cadeia_e_real(textArchive) == verdadeiro){
 				textValue = ty.cadeia_para_real(textArchive)
@@ -676,10 +677,11 @@ programa
 				custoProduto[i] = textCost
 			}
 		}
+		arc.fechar_arquivo(archiveStock)
 	}
 
 	// FUNCIONALIDADE EM CONSTRUÇÃO
-	//	Função que gerencia o valor total da venda e a quantidade de item vendida
+	//	Funcao que gerencia o valor total da venda e a quantidade de item vendida
 	funcao real salesSum(real totalValueSales){
 		para(inteiro i = 0; i < arraySize; i++){
 			se(codigoProduto[i]==codigoV){
@@ -692,16 +694,16 @@ programa
 	}
 
 	// FUNCIONALIDADE EM CONSTRUÇÃO
-	funcao inteiro withdrawStock(real retiradaEstoque, inteiro estoqueVenda){
+	funcao vazio withdrawStock(real retiradaEstoque, inteiro estoqueVenda){
 		inteiro itemAddition = 1
-		para(inteiro i = 0; i < itemAddition; i++){
+		para(inteiro i = 0; i < arraySize; i++){
 			se(codigoProduto[i]==codigoV){
 				escreva("|         Informe a quantidade           |\n")
 				escreva("|: ")
 					leia(retiradaEstoque)
 				se(retiradaEstoque < 1){
 					escreva("|         Informe a quantidade           |\n")
-					escreva("| QUANTIDADE INVÁLIDA!!!                 |")
+					escreva("| QUANTIDADE INVÁIDA!!!                 |")
 					escreva("| Informe uma quantia válida             |\n")
 					escreva("|: ")
 						leia(retiradaEstoque)
@@ -711,7 +713,7 @@ programa
 					inteiro auxiliar = estoqueProduto[i] - retiradaEstoque 
 					estoqueProduto[i] = auxiliar
 					se(estoqueProduto[i] < 0){
-						escreva("| Não foi possível realizar a adiçao do  |\n")
+						escreva("| Não foi possível realizar a adição do  |\n")
 						escreva("| item! Quantidade solicitada insponível |\n| em estoque!")
 						estoqueVenda = estoqueVenda
 					}senao{
@@ -720,10 +722,19 @@ programa
 					auxiliar = 0
 				}
 			}
-		}retorne estoqueVenda
+		}
+		
+		archiveStock = arc.abrir_arquivo(stockDB,arc.MODO_ESCRITA)
+		para(inteiro i = 0; i< arraySize; i++){
+			se(codigoProduto[i] > 0){
+				textArchive = ty.inteiro_para_cadeia(estoqueProduto[i],10)
+				arc.escrever_linha(textArchive, archiveStock)
+			}
+		}
+		arc.fechar_arquivo(archiveStock)
 	}
 
-	//	Função de verificação da existencia da DB de venda ao reiniciar o sistema
+	//	Funcao de verificação da existencia da DB de venda ao reiniciar o sistema
 	funcao vazio fileExist(){
 		logico fileExist = arc.arquivo_existe(salesInformation)
 		enquanto(fileExist == verdadeiro){
@@ -734,7 +745,7 @@ programa
 		}
 	}
 
-	//	Função para obter a data e hora da venda
+	//	Funcao para obter a data e hora da venda
 	funcao cadeia obtainingTimetable(){
 		minute = cad.minuto_atual()
 		se(minute < 10){
@@ -753,10 +764,10 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 8005; 
- * @DOBRAMENTO-CODIGO = [218, 223, 229, 234, 239, 247, 255, 268, 280, 289, 298, 307, 317, 606, 632, 639, 682, 694, 726, 737];
+ * @POSICAO-CURSOR = 36990; 
+ * @DOBRAMENTO-CODIGO = [216, 221, 227, 232, 237, 245, 253, 266, 278, 287, 296, 305, 315, 604, 630, 737, 748];
  * @PONTOS-DE-PARADA = ;
- * @SIMBOLOS-INSPECIONADOS = {estoqueProduto, 12, 9, 14}-{auxiliar, 711, 13, 8};
+ * @SIMBOLOS-INSPECIONADOS = {estoqueProduto, 12, 9, 14}-{auxiliar, 713, 13, 8};
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
  * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */
