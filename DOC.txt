@@ -1,0 +1,28 @@
+<!-- 
+    **SISTEMA DE ARQUIVOS**
+    Clinte(Nº)
+    	ARQ-INFO
+    		Código da venda
+    		Data e horario da venda (IMPLEMENTAÇÃO FUTURA)
+    		CÓDIGOS DOS PRODUTOS + NOMES + VALORES
+    		Tipo de pagamento
+    		Valor total de compra
+        ARQ-VENDAS
+            Produto
+            Valor
+-->
+
+<!--
+    **ETAPAS DA FUNCIONALIDADE DE VENDA**
+
+    BACK:
+        ->  Programa printa a tela de venda
+        ->  Abre os arquivos DB
+        ->  Atribui as informações das DB nos respectivos vetores
+        ->  Inicia 2 loops um para todas as vendas a serem feitas, 
+            e outro dentro do primeiro que serve para a selação dos 
+            produtos do cliente da venda atual.
+        ->
+        ->
+
+-->
