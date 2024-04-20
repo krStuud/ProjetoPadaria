@@ -8,8 +8,11 @@
     		Tipo de pagamento
     		Valor total de compra
         ARQ-VENDAS
+	    Item
+	    Código
             Produto
             Valor
+	    Quantidade
 -->
 
 <!--

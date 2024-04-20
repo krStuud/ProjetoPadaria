@@ -16,18 +16,18 @@ programa
 	real valorProduto[9999], custoProduto[9999]
 	
 	//	Variaveis globais usadas para a manipulacao e alocação temporária de dados.
-	cadeia textArchive, nome, clientName = "", salesInformation = "", taxReceipt = ""
+	cadeia textArchive, nome, clientName = "", salesInformation = "", taxReceipt = "", saleSummary[5], saleSummaryText = ""
 	inteiro menuOption = 0, estoque, codigo = 0,  contador = 1, quantidadeOperacoes = 0, archiveCode,
-	archiveStock, archiveName, archiveValue, archiveCost, salesArchive, textCode, textStock, codigoV, estoqueVenda = 0,
-	codeClientlientDirectory,nameClientlientDirectory,valueClientlientDirectory, salesMade = 0, numCaracteres,
-	clientValue = 1
-	real textValue, textCost, valor, custo, valorVendaRealizada = 0.0,retiradaEstoque = 0.0, CustoV
+	archiveStock, archiveName, archiveValue, archiveCost, salesArchive, textCode, textStock, codigoVenda, estoqueVenda = 0,
+	codeClientlientDirectory,nameClientlientDirectory,valueClientlientDirectory, salesMade = 0, numCaracteres, clientCode = 0,
+	contadorAuxiliar = 1,retiradaEstoque = 0
+	real textValue, textCost, valor, custo, valorVendaRealizada = 0.0, CustoV
 	
 	/*	Variaveis globais de auxilio na obtencao de dados e gerenciamento de estruturas de dados
 	(data, tempo, geracao de codigos aleatorios,loops, etc...)*/
-	cadeia  salesDate = "", minuteCad
+	cadeia  salesDate = "", minuteCad, identificationFile = ""
 	caracter continuar = 's', makeSale = 'n', newSale = 's'
-	inteiro clientCode = utl.sorteia(1000, 2000), minute
+	inteiro codeDrawV = 0, minute, caracterPositionChecker = 0, codeChecker= 0,idFile, metodoPagamento=0
 	logico formato_12h = falso
 	
 	
@@ -174,41 +174,38 @@ programa
 				limpa()
 				print_sales_screen() //	Impressao da tela
 				databaseAccess() //	Acesso ao banco de dados
-
+				
 				//	**SISTEMA DE VENDAS**
 				faca{
-					clientName = salesDBDirectory + "Cliente" + clientValue
-					salesInformation = clientName + "/salesInformation"+clientValue+".txt"
+					clientCode = codeDraw(codeDrawV)
+					clientName = salesDBDirectory +"venda"+ contadorAuxiliar
+					identificationFile = clientName + "/"+contadorAuxiliar+".txt"
 					fileExist()
 					faca{
-					salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ESCRITA)
-					print_products()
-					escreva("| Informe o cﾃｳdigo do produto desejado   |\n")
-					print_line_4_options()
-					escreva(": ")
-						leia(codigoV)
-
-						salesSum(valorVendaRealizada)
-						withdrawStock(retiradaEstoque, estoqueVenda)
+						salesInformation = clientName + "/salesInformation"+contadorAuxiliar+ "-" + clientCode+".txt"
+						idFile = arc.abrir_arquivo(identificationFile, arc.MODO_ESCRITA)
+						arc.fechar_arquivo(idFile)
+						salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ACRESCENTAR)
+						print_products()
+						print_sales_product_code_request()
+						saleSystem(retiradaEstoque, estoqueVenda)
 						
 						// FUNCIONALIDADE EM CONSTRUÇÃO
-						cadeia teste = ty.real_para_cadeia(valorVendaRealizada) +","+ ty.inteiro_para_cadeia(estoqueProduto[0], 10)
-						arc.escrever_linha(teste, salesArchive)
+						recording_purchase_data()
+						print_checkout_text()
 						arc.fechar_arquivo(salesArchive)
-						escreva("\n")
-						print_line_4_options()
-						escreva("|      Deseja finalizar (S/N)?      | \n")
-						print_line_4_options()
-						escreva(": ")
-							leia(makeSale)
 						limpa()
 					}enquanto(makeSale != 's' e makeSale != 'S')
-					escreva("| Deseja realizar nova venda(S/N)? ")
-						leia(newSale)
-					valorVendaRealizada = 0.0
-					clientValue++
-					limpa()
+						method_payment_screen()
+						salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ACRESCENTAR)
+						arc.escrever_linha(ty.real_para_cadeia(valorVendaRealizada), salesArchive)
+						arc.fechar_arquivo(salesArchive)
+						print_new_sale_text()
+						valorVendaRealizada = 0.0
+						contadorAuxiliar++
+						limpa()
 				}enquanto(newSale != 'n' e newSale != 'N')
+				inicio()
 			pare
 		}
 	}
@@ -216,12 +213,12 @@ programa
 	//	Função para imprimir HEADER DO SISTEMA (DESIGN)
 	funcao vazio print_header(){
 		escreva(" _________________________________\n")
-		escreva("|         Padoca Pﾃグ QUENTE       |\n")
+		escreva("|         Padoca PÃO QUENTE       |\n")
 	}
 
 	funcao vazio print_header_functions_screen(){
 		escreva(" ________________________________________\n")
-		escreva("|            Padoca Pﾃグ QUENTE           |\n")
+		escreva("|            Padoca PÃO QUENTE           |\n")
 	}
 
 	//	Função para imprimir linha (DESIGN)
@@ -250,10 +247,10 @@ programa
 		print_line_4_options()
 	}
 
-	// Função para imprimir produtos vendidos (DESIGN)
+	//	Função para imprimir produtos vendidos (DESIGN)
 	funcao vazio print_products(){
 		print_line_4_options()
-		escreva("| Item | Cﾃｳdigo | Descriﾃｧﾃ｣o|             |\n")
+		escreva("| Item | Código | Descrição|             |\n")
 		print_line_4_options()
 		para(inteiro i = 0; i< contador; i++){
 			escreva("|  ",(i+1),"   |   ",codigoProduto[i],"  | ")
@@ -263,19 +260,19 @@ programa
 		print_line_4_options()
 	}
 
-	// Funcao para imprimir a opcao de requisicao do codigo (DESIGN)
+	//	Funcao para imprimir a opcao de requisicao do codigo (DESIGN)
 	funcao vazio print_code_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
-		escreva("|      Informe o cﾃｳdigo do produto       |\n")
+		escreva("|      Informe o código do produto       |\n")
 		print_line_4_options()
-		escreva("| OBS: cﾃｳdigo iniciado com 0, serﾃ｣o      |"
-		+"\n| validados somente nﾃｺmeros subsequentes | \n")
+		escreva("| OBS: código iniciado com 0, serão      |"
+		+"\n| validados somente números subsequentes | \n")
 		print_line_4_options()
 		escreva(": ")
 	}
 
-	// Funcao para imprimir a opcao de requisicao do nome do produto (DESIGN)
+	//	Funcao para imprimir a opcao de requisicao do nome do produto (DESIGN)
 	funcao vazio print_name_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
@@ -284,7 +281,7 @@ programa
 		escreva(": ")
 	}
 
-	// Funcao para imprimir a opcao de requisicao do estoque do produto (DESIGN)
+	//	Funcao para imprimir a opcao de requisicao do estoque do produto (DESIGN)
 	funcao vazio print_stock_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
@@ -293,7 +290,7 @@ programa
 		escreva(": ")
 	}
 
-	// Funcao para imprimir a opcao de requisicao do valor do produto (DESIGN)
+	//	Funcao para imprimir a opcao de requisicao do valor do produto (DESIGN)
 	funcao vazio print_value_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
@@ -302,7 +299,7 @@ programa
 		escreva("R$ ")
 	}
 
-	// Funcao para imprimir a opcao de requisicao do custo do produto (DESIGN)
+	//	Funcao para imprimir a opcao de requisicao do custo do produto (DESIGN)
 	funcao vazio print_cost_request_option(){
 		print_resgistration_screen()
 		print_line_4_options()
@@ -311,17 +308,62 @@ programa
 		escreva("R$ ")
 	}
 
+	//	Funcao para imprimir a requisicao do codigo do produto desejado (DESIGN e INTERAÇÃO)
+	funcao vazio print_sales_product_code_request(){
+		escreva("| Informe o código do produto desejado   |\n")
+		print_line_4_options()
+		escreva(": ")
+			leia(codigoVenda)
+	}
+
+	funcao vazio print_method_payment_screen(){
+		print_header_functions_screen()
+		print_line_4_options()
+		escreva("| PAGAMENTO                              |\n")
+		escreva("| Escolha a opção desejada abaixo        |")
+		escreva("\n")
+		print_line_4_options()
+		escreva(" [1]-Cartão \n [2]-Dinheiro/PIX")
+		escreva("\n: ")
+			leia(metodoPagamento)
+		enquanto(metodoPagamento <1 e metodoPagamento>2){
+			print_header_functions_screen()
+			print_line_4_options()
+			escreva("| PAGAMENTO                              |\n")
+			escreva("| OPÇÃO INVÁLIDA! Escolha um opção válida|")
+			escreva("\n")
+			print_line_4_options()
+			escreva(" [1]-Cartão \n [2]-Dinheiro/PIX")
+			escreva("\n: ")
+				leia(metodoPagamento)
+		}
+	}
+	
+	funcao vazio print_checkout_text() {
+		escreva("\n")
+		print_line_4_options()
+		escreva("|      Deseja finalizar (S/N)?      | \n")
+		print_line_4_options()
+		escreva(": ")
+			leia(makeSale)
+	}
+
+	funcao vazio print_new_sale_text(){
+		escreva("| Deseja realizar nova venda(S/N)? ")
+			leia(newSale)
+	}
+
 	// FUNCIONALIDADE EM CONSTRUCAO
 	//	Funﾃｧﾃ｣o de impressﾃ｣o do cumpom fiscal
 	/*funcao vazio print_tax_coupon(){
-		escreva("	     PADOCA Pﾃグ QUENTE LTDA.\nQuadra 1005 Sul Alameda 23 - Plano Diretor Sul"
+		escreva("	     PADOCA PÃO QUENTE LTDA.\nQuadra 1005 Sul Alameda 23 - Plano Diretor Sul"
 			+ "\n77.018-530 Palmas-TO\nCNPJ: 15.688.333/0001-22\nIE: 776537563\nIM: ISENTO"
 			+"\n================================================"
-			+"\nCﾃ泥IGO: "+clientCode+"\nDATA E HORA: "+ obtainingTimetable()
+			+"\nCÓDIGO: "+clientCode+"\nDATA E HORA: "+ obtainingTimetable()
 			+"\n================================================"
 			+"\n	      CUPOM SEM VALOR FISCAL"
 			+"\n================================================"
-			+"\n| ITEM | Cﾃ泥IGO | DESCRIﾃ�ﾃグ..........|  VALOR  |")
+			+"\n| ITEM | CÓDIGO | DESCRIÇÃO..........|  VALOR  |")
 			para(inteiro i = 0; i < 5; i++){
 				se(tx.numero_caracteres(nomeProduto[i])< 4){
 					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) <4){
@@ -594,37 +636,42 @@ programa
 	}
 
 	*/
-
-	// FUNCIONALIDADE EM CONSTRUCAO
-	/*funcao cadeia print_tax_receipt(){
-		cadeia aux = +", "+
-		retorne aux
-	}*/
 	
 	//	Funcao que mostra o menu para o usuario e retorna a opcao selecionada do mesmo. (DESIGN E INTERACAO)
 	funcao inteiro mainMenu(inteiro menuOption){
 		print_header()
 		print_line()
-		escreva("| Escolha a opﾃｧﾃ｣o desejada abaixo |")
+		escreva("| Escolha a opção desejada abaixo |")
 		escreva("\n")
 		print_line()
-		escreva(" [1]- Cadastrar Produto \n [2]- Realizar Venda \n [3]- Relatﾃｳrio Atual \n [4]- Fechamento de Caixa")
+		escreva(" [1]- Cadastrar Produto \n [2]- Realizar Venda \n [3]- Relatório Atual \n [4]- Fechamento de Caixa")
 		escreva("\n: ")
 			leia(menuOption)
 		enquanto(menuOption <1 ou menuOption >4){
 			limpa()
 			print_header()
 			print_line()
-			escreva("| OPﾃ�ﾃグ INVﾃ´IDA!                 |\n")
-			escreva("| Escolha uma opﾃｧﾃ｣o vﾃ｡lida abaixo |")
+			escreva("| OPÇÃO INVÁIDA!                 |\n")
+			escreva("| Escolha uma opção válida abaixo |")
 			escreva("\n")
 			print_line()
-			escreva(" [1]- Cadastrar Produto \n [2]- Realizar Venda \n [3]- Relatﾃｳrio Atual \n [4]- Fechamento de Caixa")
+			escreva(" [1]- Cadastrar Produto \n [2]- Realizar Venda \n [3]- Relatório Atual \n [4]- Fechamento de Caixa")
 			escreva("\n: ")
 				leia(menuOption)
 		}
 
 		retorne menuOption
+	}
+
+	funcao vazio method_payment_screen(){
+		print_method_payment_screen()
+		escolha(metodoPagamento){
+			caso 1:
+				escreva("Deu certo")
+			pare
+			caso 2:
+			pare
+		}
 	}
 
 	//	Funcao de verificacao de continuidade do usuario.
@@ -679,25 +726,12 @@ programa
 		}
 		arc.fechar_arquivo(archiveStock)
 	}
-
+	
 	// FUNCIONALIDADE EM CONSTRUÇÃO
-	//	Funcao que gerencia o valor total da venda e a quantidade de item vendida
-	funcao real salesSum(real totalValueSales){
-		para(inteiro i = 0; i < arraySize; i++){
-			se(codigoProduto[i]==codigoV){
-				valor = valorProduto[i]
-				valorVendaRealizada+=valorProduto[i]
-				salesMade++
-			}
-		}
-		retorne totalValueSales
-	}
-
-	// FUNCIONALIDADE EM CONSTRUÇÃO
-	funcao vazio withdrawStock(real retiradaEstoque, inteiro estoqueVenda){
+	funcao vazio saleSystem(inteiro retiradaEstoque, inteiro estoqueVenda){
 		inteiro itemAddition = 1
 		para(inteiro i = 0; i < arraySize; i++){
-			se(codigoProduto[i]==codigoV){
+			se(codigoProduto[i]==codigoVenda){
 				escreva("|         Informe a quantidade           |\n")
 				escreva("|: ")
 					leia(retiradaEstoque)
@@ -708,6 +742,11 @@ programa
 					escreva("|: ")
 						leia(retiradaEstoque)
 				}
+				saleSummary[0] = ty.inteiro_para_cadeia(codigoVenda, 10)
+				saleSummary[1] = nomeProduto[i]
+				saleSummary[2] = ty.real_para_cadeia(valorProduto[i])
+				saleSummary[3] = ty.inteiro_para_cadeia(retiradaEstoque, 10)
+				saleSummary[4] = ty.real_para_cadeia(math.arredondar(valorProduto[i]*retiradaEstoque,2))
 				
 				para(inteiro j = 0; j < itemAddition; j++){
 					inteiro auxiliar = estoqueProduto[i] - retiradaEstoque 
@@ -721,6 +760,7 @@ programa
 					}
 					auxiliar = 0
 				}
+				valorVendaRealizada+=math.arredondar(valorProduto[i]*retiradaEstoque,2)
 			}
 		}
 		
@@ -732,16 +772,25 @@ programa
 			}
 		}
 		arc.fechar_arquivo(archiveStock)
+		arc.fechar_arquivo(salesArchive)
 	}
 
+	// 	Função de gravação dos itens comprados no arquivo resumo da compra
+	funcao vazio recording_purchase_data(){
+		salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ACRESCENTAR)
+		cadeia teste = "Código: "+saleSummary[0]+", Produto: "+saleSummary[1]
+		+", Valor Un.: R$ "+saleSummary[2]+", Qtd. Vend.: "+saleSummary[3]
+		+", Valor Total R$: "+saleSummary[4]
+		arc.escrever_linha(teste, salesArchive)
+	}
 	//	Funcao de verificação da existencia da DB de venda ao reiniciar o sistema
 	funcao vazio fileExist(){
-		logico fileExist = arc.arquivo_existe(salesInformation)
+		logico fileExist = arc.arquivo_existe(identificationFile)
 		enquanto(fileExist == verdadeiro){
-						clientValue++
-						clientName = salesDBDirectory + "Cliente" + clientValue
-						salesInformation = clientName + "/salesInformation"+clientValue+".txt"
-						fileExist = arc.arquivo_existe(salesInformation)
+						contadorAuxiliar++
+						clientName = salesDBDirectory +"venda"+ contadorAuxiliar
+						identificationFile = clientName + "/" +contadorAuxiliar+".txt"
+						fileExist = arc.arquivo_existe(identificationFile)
 		}
 	}
 
@@ -758,16 +807,20 @@ programa
 		retorne salesDate 
 	}
 
+	funcao inteiro codeDraw(inteiro codeDraw){
+		codeDraw = utl.sorteia(10000, 20000)
+		retorne codeDraw
+	}
 }
 /* $$$ Portugol Studio $$$ 
  * 
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 36990; 
- * @DOBRAMENTO-CODIGO = [216, 221, 227, 232, 237, 245, 253, 266, 278, 287, 296, 305, 315, 604, 630, 737, 748];
+ * @POSICAO-CURSOR = 8155; 
+ * @DOBRAMENTO-CODIGO = [213, 218, 224, 229, 234, 242, 250, 263, 275, 284, 293, 302, 341, 350, 357, 640, 677, 684, 730, 786, 797, 809];
  * @PONTOS-DE-PARADA = ;
- * @SIMBOLOS-INSPECIONADOS = {estoqueProduto, 12, 9, 14}-{auxiliar, 713, 13, 8};
+ * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
  * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */
