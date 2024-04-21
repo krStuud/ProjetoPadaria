@@ -20,14 +20,14 @@ programa
 	inteiro menuOption = 0, estoque, codigo = 0,  contador = 1, quantidadeOperacoes = 0, archiveCode,
 	archiveStock, archiveName, archiveValue, archiveCost, salesArchive, textCode, textStock, codigoVenda, estoqueVenda = 0,
 	codeClientlientDirectory,nameClientlientDirectory,valueClientlientDirectory, salesMade = 0, numCaracteres, clientCode = 0,
-	contadorAuxiliar = 1,retiradaEstoque = 0
+	contadorAuxiliar = 1,retiradaEstoque = 0,taxArchive
 	real textValue, textCost, valor, custo, valorVendaRealizada = 0.0, CustoV
 	
 	/*	Variaveis globais de auxilio na obtencao de dados e gerenciamento de estruturas de dados
 	(data, tempo, geracao de codigos aleatorios,loops, etc...)*/
-	cadeia  salesDate = "", minuteCad, identificationFile = ""
+	cadeia  salesDate = "", minuteCad, identificationFile = "", metodoPagamentoTexto = ""
 	caracter continuar = 's', makeSale = 'n', newSale = 's'
-	inteiro codeDrawV = 0, minute, caracterPositionChecker = 0, codeChecker= 0,idFile, metodoPagamento=0
+	inteiro codeDrawV = 0, minute, idFile, metodoPagamento=0, productAdded = 1
 	logico formato_12h = falso
 	
 	
@@ -182,7 +182,8 @@ programa
 					identificationFile = clientName + "/"+contadorAuxiliar+".txt"
 					fileExist()
 					faca{
-						salesInformation = clientName + "/salesInformation"+contadorAuxiliar+ "-" + clientCode+".txt"
+						salesInformation = clientName + "/salesInformation-" + clientCode+".txt"
+						taxReceipt = clientName + "/taxReceipt-" + clientCode+".txt"
 						idFile = arc.abrir_arquivo(identificationFile, arc.MODO_ESCRITA)
 						arc.fechar_arquivo(idFile)
 						salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ACRESCENTAR)
@@ -197,6 +198,7 @@ programa
 						limpa()
 					}enquanto(makeSale != 's' e makeSale != 'S')
 						method_payment_screen()
+						print_tax_coupon()
 						salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ACRESCENTAR)
 						arc.escrever_linha(ty.real_para_cadeia(valorVendaRealizada), salesArchive)
 						arc.fechar_arquivo(salesArchive)
@@ -353,251 +355,183 @@ programa
 			leia(newSale)
 	}
 
-	// FUNCIONALIDADE EM CONSTRUCAO
+	// FUNCIONALIDADE EM CONSTRUCAO (FUNCIONALIDADE COM BUG)
 	//	Funﾃｧﾃ｣o de impressﾃ｣o do cumpom fiscal
-	/*funcao vazio print_tax_coupon(){
-		escreva("	     PADOCA PÃO QUENTE LTDA.\nQuadra 1005 Sul Alameda 23 - Plano Diretor Sul"
-			+ "\n77.018-530 Palmas-TO\nCNPJ: 15.688.333/0001-22\nIE: 776537563\nIM: ISENTO"
-			+"\n================================================"
-			+"\nCÓDIGO: "+clientCode+"\nDATA E HORA: "+ obtainingTimetable()
-			+"\n================================================"
-			+"\n	      CUPOM SEM VALOR FISCAL"
-			+"\n================================================"
-			+"\n| ITEM | CÓDIGO | DESCRIÇÃO..........|  VALOR  |")
-			para(inteiro i = 0; i < 5; i++){
-				se(tx.numero_caracteres(nomeProduto[i])< 4){
+	funcao vazio print_tax_coupon(){
+		escreva("	           PADOCA PÃO QUENTE LTDA.\n\nQuadra 1005 Sul Alameda 23 - Plano Diretor Sul"
+			+ "77.018-530\nPalmas-TO CNPJ: 15.688.333/0001-22\nIE: 776537563 IM: ISENTO"
+			+"\n==========================================================="
+			+"\nCÓDIGO: "+clientCode+"\n"+obtainingTimetable()
+			+"\n==========================================================="
+			+"\n	             CUPOM SEM VALOR FISCAL"
+			+"\n==========================================================="
+			+"\n| DESCRIÇÃO..........| VL. UN. (R$) | QTD |  VL. TL. (R$) |")
+			para(inteiro i = 0; i < productAdded; i++){
+				se(tx.numero_caracteres(nomeProduto[i]) == 3){
 					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) <4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"            |"+valorProduto[i]+"0|")//13
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) ==4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"            |"+valorProduto[i]+"|")//13
+						se(tx.numero_caracteres(saleSummary[3]) < 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 4){
+								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" |   "+saleSummary[3]+" |            "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" |   "+saleSummary[3]+" |           "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" |   "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+						senao se(tx.numero_caracteres(saleSummary[3]) == 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 4){
+								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" |  "+saleSummary[3]+" |           "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+						senao se(tx.numero_caracteres(saleSummary[3]) == 3){
+							se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" | "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
 					}
-				}senao se(tx.numero_caracteres(nomeProduto[i]) < 5){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"               |     "+valorProduto[i]+"0|")//14
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"               |  "+valorProduto[i]+"0|")//14
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"               |    "+valorProduto[i]+"|")//14
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"               |   "+valorProduto[i]+"|")//14
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"               |  "+valorProduto[i]+"|")//14
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"               | "+valorProduto[i]+"|")//14
+
+					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) <5){
+						se(tx.numero_caracteres(saleSummary[3]) < 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 4){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |   "+saleSummary[3]+" |            "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |   "+saleSummary[3]+" |           "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |   "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+						senao se(tx.numero_caracteres(saleSummary[3]) == 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 4){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |  "+saleSummary[3]+" |           "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+						senao se(tx.numero_caracteres(saleSummary[3]) == 3){
+							se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" | "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
 					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 6){//arroz
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"              |     "+valorProduto[i]+"0|")//13
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"              |  "+valorProduto[i]+"0|")//13
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"              |    "+valorProduto[i]+"|")//13
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"              |   "+valorProduto[i]+"|")//13
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"              |  "+valorProduto[i]+"|")//13
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"              | "+valorProduto[i]+"|")//13
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 7){//batata
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"             |     "+valorProduto[i]+"0|")//12
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"             |     "+valorProduto[i]+"|")//12
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"             |    "+valorProduto[i]+"|")//12
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"             |   "+valorProduto[i]+"|")//12
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"             |  "+valorProduto[i]+"|")//12
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"             | "+valorProduto[i]+"|")//12
-					}
-				}
-				senao se(tx.numero_caracteres(nomeProduto[i])< 8){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"            |     "+valorProduto[i]+"0|")//11
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"            |     "+valorProduto[i]+"|")//11
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"            |    "+valorProduto[i]+"|")//11
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"            |   "+valorProduto[i]+"|")//11
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"            |  "+valorProduto[i]+"|")//11
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"            | "+valorProduto[i]+"|")//11
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 9){//macarrﾃ｣o
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"           |     "+valorProduto[i]+"0|")//10
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"           |     "+valorProduto[i]+"|")//10
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"           |    "+valorProduto[i]+"|")//10
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"           |   "+valorProduto[i]+"|")//10
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"           |  "+valorProduto[i]+"|")//10
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"           | "+valorProduto[i]+"|")//10
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 10){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"          |     "+valorProduto[i]+"0|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"          |     "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"          |    "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"          |   "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"          |  "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"          | "+valorProduto[i]+"|")
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 11){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"         |     "+valorProduto[i]+"0|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"         |     "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"         |    "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"         |   "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"         |  "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"         | "+valorProduto[i]+"|")
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 12){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"        |     "+valorProduto[i]+"0|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"        |     "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"        |    "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"        |   "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"        |  "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"        | "+valorProduto[i]+"|")
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 13){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"       |     "+valorProduto[i]+"0|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"       |     "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"       |    "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"       |   "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"       |  "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"       | "+valorProduto[i]+"|")
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 14){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"      |     "+valorProduto[i]+"0|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"      |     "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"      |    "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"      |   "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"      |  "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"      | "+valorProduto[i]+"|")
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 15){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"     |     "+valorProduto[i]+"0|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"     |     "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"     |    "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"     |   "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"     |  "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"     | "+valorProduto[i]+"|")
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 16){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"    |     "+valorProduto[i]+"0|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"    |     "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"    |    "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"    |   "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"    |  "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"    | "+valorProduto[i]+"|")
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 17){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"   |     "+valorProduto[i]+"0|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"   |     "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"   |    "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"   |   "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"   |  "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"   | "+valorProduto[i]+"|")
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 18){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"  |     "+valorProduto[i]+"0|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"  |     "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"  |    "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"  |   "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"  |  "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"  | "+valorProduto[i]+"|")
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 19){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+" |     "+valorProduto[i]+"0|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+" |     "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+" |    "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+" |   "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+" |  "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+" | "+valorProduto[i]+"|")
-					}
-				}senao se(tx.numero_caracteres(nomeProduto[i])< 20){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 4){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"|     "+valorProduto[i]+"0|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 5){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"|     "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 6){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"|    "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 7){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"|   "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 8){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"|  "+valorProduto[i]+"|")
-					}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) < 9){
-						escreva("\n|   "+(i+1)+"  |  "+codigoProduto[i]+" 	| "+nomeProduto[i]+"| "+valorProduto[i]+"|")
+
+					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) <6){
+						se(tx.numero_caracteres(saleSummary[3]) < 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 4){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |   "+saleSummary[3]+" |            "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |   "+saleSummary[3]+" |           "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |   "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+						senao se(tx.numero_caracteres(saleSummary[3]) == 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 4){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |  "+saleSummary[3]+" |           "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+						senao se(tx.numero_caracteres(saleSummary[3]) == 3){
+							se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" | "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 7){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" | "+saleSummary[3]+" |         "+saleSummary[4]+"|")
+							}
+						}
 					}
 				}
-			}
+
+				se(tx.numero_caracteres(nomeProduto[i]) == 4){
+					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) == 3){
+						se(tx.numero_caracteres(saleSummary[3]) < 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 4){
+								escreva("\n| "+saleSummary[1]+"               |          "+saleSummary[2]+" |   "+saleSummary[3]+" |            "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+								escreva("\n| "+saleSummary[1]+"               |          "+saleSummary[2]+" |   "+saleSummary[3]+" |           "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"               |          "+saleSummary[2]+" |   "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+						senao se(tx.numero_caracteres(saleSummary[3]) == 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 4){
+								escreva("\n| "+saleSummary[1]+"             |          "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+								escreva("\n| "+saleSummary[1]+"             |          "+saleSummary[2]+" |  "+saleSummary[3]+" |           "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"             |          "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+						senao se(tx.numero_caracteres(saleSummary[3]) > 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"             |          "+saleSummary[2]+" | "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+					}
+
+					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) == 4){
+						se(tx.numero_caracteres(saleSummary[3]) < 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 4){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |   "+saleSummary[3]+" |            "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |   "+saleSummary[3]+" |           "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |   "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+						senao se(tx.numero_caracteres(saleSummary[3]) == 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 4){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |  "+saleSummary[3]+" |           "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+						senao se(tx.numero_caracteres(saleSummary[3]) == 3){
+							se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" | "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+					}
+
+					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) == 5){
+						se(tx.numero_caracteres(saleSummary[3]) < 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 4){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |   "+saleSummary[3]+" |            "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |   "+saleSummary[3]+" |           "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |   "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+						senao se(tx.numero_caracteres(saleSummary[3]) == 2){
+							se(tx.numero_caracteres(saleSummary[4]) < 4){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |  "+saleSummary[3]+" |           "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}
+						}
+						senao se(tx.numero_caracteres(saleSummary[3]) == 3){
+							se(tx.numero_caracteres(saleSummary[4]) < 6){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" | "+saleSummary[3]+" |          "+saleSummary[4]+"|")
+							}senao se(tx.numero_caracteres(saleSummary[4]) < 7){
+								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" | "+saleSummary[3]+" |         "+saleSummary[4]+"|")
+							}
+						}
+					}
+				}
+
+			}// Fim loop
 			escreva("\n================================================")
 			se(tx.numero_caracteres(ty.real_para_cadeia(valor)) < 4){
 					escreva("\n|TOTAL                                 R$  "+valor+"0|")
@@ -613,29 +547,27 @@ programa
 				escreva("\n|TOTAL                              R$ "+valor+"|")
 			}
 
-			se(tx.numero_caracteres(ty.real_para_cadeia(valorFinal)) < 4){
-					escreva("\n|FORMA DE PAGAMENTO                    R$  "+valorFinal+"0|")
-			}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorFinal)) < 5){
-				escreva("\n|FORMA DE PAGAMENTO                    R$  "+valorFinal+"|")
-			}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorFinal)) < 6){
-				escreva("\n|FORMA DE PAGAMENTO                   R$  "+valorFinal+"|")
-			}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorFinal)) < 7){
-				escreva("\n|FORMA DE PAGAMENTO                  R$  "+valorFinal+"|")
-			}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorFinal)) < 8){
-				escreva("\n|FORMA DE PAGAMENTO                 R$  "+valorFinal+"|")
-			}senao se(tx.numero_caracteres(ty.real_para_cadeia(valorFinal)) < 9){
-				escreva("\n|FORMA DE PAGAMENTO                R$  "+valorFinal+"|")
+			se(tx.numero_caracteres(saleSummary[4]) < 4){
+					escreva("\n|FORMA DE PAGAMENTO                    R$  "+saleSummary[4]+"0|")
+			}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
+				escreva("\n|FORMA DE PAGAMENTO                    R$  "+saleSummary[4]+"|")
+			}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
+				escreva("\n|FORMA DE PAGAMENTO                   R$  "+saleSummary[4]+"|")
+			}senao se(tx.numero_caracteres(saleSummary[4]) < 7){
+				escreva("\n|FORMA DE PAGAMENTO                  R$  "+saleSummary[4]+"|")
+			}senao se(tx.numero_caracteres(saleSummary[4]) < 8){
+				escreva("\n|FORMA DE PAGAMENTO                 R$  "+saleSummary[4]+"|")
+			}senao se(tx.numero_caracteres(saleSummary[4]) < 9){
+				escreva("\n|FORMA DE PAGAMENTO                R$  "+saleSummary[4]+"|")
 			}
 			escreva("\n================================================"
-			+"\n|Impostos:		                       |"
-			+"\n|Imposto ﾃｩ roubo!                              |"
-			+"\n|		                               |"
-			+"\n|		                               |"
+			+"\n|Impostos:                                     |"
+			+"\n|Imposto é roubo!                              |"
+			+"\n|                                              |"
+			+"\n|                                              |"
 			+"\n================================================"
-			+"\n         Vﾃ� PELA SOMBRA E VOLTE SEMPRE!!         \n")
+			+"\n         VÃO PELA SOMBRA E VOLTE SEMPRE!!         \n")
 	}
-
-	*/
 	
 	//	Funcao que mostra o menu para o usuario e retorna a opcao selecionada do mesmo. (DESIGN E INTERACAO)
 	funcao inteiro mainMenu(inteiro menuOption){
@@ -667,9 +599,10 @@ programa
 		print_method_payment_screen()
 		escolha(metodoPagamento){
 			caso 1:
-				escreva("Deu certo")
+			
 			pare
 			caso 2:
+				
 			pare
 		}
 	}
@@ -742,11 +675,6 @@ programa
 					escreva("|: ")
 						leia(retiradaEstoque)
 				}
-				saleSummary[0] = ty.inteiro_para_cadeia(codigoVenda, 10)
-				saleSummary[1] = nomeProduto[i]
-				saleSummary[2] = ty.real_para_cadeia(valorProduto[i])
-				saleSummary[3] = ty.inteiro_para_cadeia(retiradaEstoque, 10)
-				saleSummary[4] = ty.real_para_cadeia(math.arredondar(valorProduto[i]*retiradaEstoque,2))
 				
 				para(inteiro j = 0; j < itemAddition; j++){
 					inteiro auxiliar = estoqueProduto[i] - retiradaEstoque 
@@ -760,6 +688,12 @@ programa
 					}
 					auxiliar = 0
 				}
+				saleSummary[0] = ty.inteiro_para_cadeia(codigoVenda, 10)
+				saleSummary[1] = nomeProduto[i]
+				saleSummary[2] = ty.real_para_cadeia(valorProduto[i])
+				saleSummary[3] = ty.inteiro_para_cadeia(retiradaEstoque, 10)
+				saleSummary[4] = ty.real_para_cadeia(math.arredondar(valorProduto[i]*retiradaEstoque,2))
+				productAdded++
 				valorVendaRealizada+=math.arredondar(valorProduto[i]*retiradaEstoque,2)
 			}
 		}
@@ -778,11 +712,12 @@ programa
 	// 	Função de gravação dos itens comprados no arquivo resumo da compra
 	funcao vazio recording_purchase_data(){
 		salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ACRESCENTAR)
-		cadeia teste = "Código: "+saleSummary[0]+", Produto: "+saleSummary[1]
+		saleSummaryText = "Código: "+saleSummary[0]+", Produto: "+saleSummary[1]
 		+", Valor Un.: R$ "+saleSummary[2]+", Qtd. Vend.: "+saleSummary[3]
 		+", Valor Total R$: "+saleSummary[4]
-		arc.escrever_linha(teste, salesArchive)
+		arc.escrever_linha(saleSummaryText, salesArchive)
 	}
+	
 	//	Funcao de verificação da existencia da DB de venda ao reiniciar o sistema
 	funcao vazio fileExist(){
 		logico fileExist = arc.arquivo_existe(identificationFile)
@@ -817,8 +752,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 8155; 
- * @DOBRAMENTO-CODIGO = [213, 218, 224, 229, 234, 242, 250, 263, 275, 284, 293, 302, 341, 350, 357, 640, 677, 684, 730, 786, 797, 809];
+ * @POSICAO-CURSOR = 13180; 
+ * @DOBRAMENTO-CODIGO = [215, 220, 226, 231, 236, 244, 252, 265, 277, 286, 295, 304, 343, 352];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
