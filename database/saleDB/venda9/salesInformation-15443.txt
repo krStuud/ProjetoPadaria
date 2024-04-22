@@ -1,2 +1,0 @@
-Código: 123, Produto: salq, Valor Un.: R$ 1.9, Qtd. Vend.: 1, Valor Total R$: 1.9
-1.9

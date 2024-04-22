@@ -15,20 +15,20 @@ programa
 	cadeia nomeProduto[9999]
 	real valorProduto[9999], custoProduto[9999]
 	
-	//	Variaveis globais usadas para a manipulacao e alocação temporária de dados.
-	cadeia textArchive, nome, clientName = "", salesInformation = "", taxReceipt = "", saleSummary[5], saleSummaryText = ""
+	//	Variaveis globais usadas para a manipulacao e alocaﾃｧﾃ｣o temporﾃ｡ria de dados.
+	cadeia textArchive, nome, clientName = "", salesInformation = "", taxReceipt = "",taxReceiptText = "", saleSummary[5], saleSummaryText = "",
+	carrinhoCompra[50][4]
 	inteiro menuOption = 0, estoque, codigo = 0,  contador = 1, quantidadeOperacoes = 0, archiveCode,
 	archiveStock, archiveName, archiveValue, archiveCost, salesArchive, textCode, textStock, codigoVenda, estoqueVenda = 0,
-	codeClientlientDirectory,nameClientlientDirectory,valueClientlientDirectory, salesMade = 0, numCaracteres, clientCode = 0,
-	contadorAuxiliar = 1,retiradaEstoque = 0,taxArchive
+	salesMade = 0, numCaracteres, clientCode = 0,contadorAuxiliar = 1,retiradaEstoque = 0,taxArchive
 	real textValue, textCost, valor, custo, valorVendaRealizada = 0.0, CustoV
 	
 	/*	Variaveis globais de auxilio na obtencao de dados e gerenciamento de estruturas de dados
 	(data, tempo, geracao de codigos aleatorios,loops, etc...)*/
 	cadeia  salesDate = "", minuteCad, identificationFile = "", metodoPagamentoTexto = ""
 	caracter continuar = 's', makeSale = 'n', newSale = 's'
-	inteiro codeDrawV = 0, minute, idFile, metodoPagamento=0, productAdded = 1
-	logico formato_12h = falso
+	inteiro codeDrawV = 0, minute, idFile, metodoPagamento=0, productAdded = 1,productPosition = 0, produtoQuantidade = 0
+	logico formato_12h = falso, verificadorCodigo = falso
 	
 	
 	//	Contantes que contem os caminhos dos bancos de dados.
@@ -96,11 +96,11 @@ programa
 					se(codigo == 0){ //	Condicional que testa a existencia de um codigo inicial
 						print_code_request_option()
 							leia(codigo)
-						//	Lacao de verificacao de existencia do codigo informado pelo usuário no BD
+						//	Lacao de verificacao de existencia do codigo informado pelo usuﾃ｡rio no BD
 						para(inteiro i = 0; i < arraySize; i++){
 							se(codigoProduto[i] == codigo){
-								escreva("Este código já｡ se encontra cadastrado,"
-								+ "informe um novo código\n: ")
+								escreva("Este cﾃｳdigo jﾃ｡�ｽ｡ se encontra cadastrado,"
+								+ "informe um novo cﾃｳdigo\n: ")
 									leia(codigo)
 								i--
 							}
@@ -123,10 +123,10 @@ programa
 					
 					print_name_request_option()
 						leia(nome)
-					//	Laﾃｧo de verificacao de existencia do produto informado pelo usuario no BD
+					//	La�ｾ�ｽｧo de verificacao de existencia do produto informado pelo usuario no BD
 					para(inteiro i = 0; i < arraySize; i++){
 						se(nomeProduto[i] == nome){
-							escreva("Este produto já existe no sistema,"
+							escreva("Este produto jﾃ｡ existe no sistema,"
 							+ "informe um novo produto\n: ")
 								leia(nome)
 							i--
@@ -158,7 +158,7 @@ programa
 					textArchive = ty.real_para_cadeia(custo)
 					arc.escrever_linha(textArchive, archiveCost)
 
-					//	Função que verifica se o usuario quer realizar um novo cadastro
+					//	Funﾃｧﾃ｣o que verifica se o usuario quer realizar um novo cadastro
 					continuar = continuityCheck(continuar)
 					limpa()
 				}enquanto(continuar != 'n' e continuar != 'N') //	Condicao do laco do sistema de cadastro
@@ -167,7 +167,7 @@ programa
 				arc.fechar_arquivo(archiveValue)
 				arc.fechar_arquivo(archiveCost)
 				limpa()
-				//	Função de retorno ao menu principal
+				//	Funﾃｧﾃ｣o de retorno ao menu principal
 				inicio()
 			pare
 			caso 2:
@@ -181,9 +181,10 @@ programa
 					clientName = salesDBDirectory +"venda"+ contadorAuxiliar
 					identificationFile = clientName + "/"+contadorAuxiliar+".txt"
 					fileExist()
+					
 					faca{
-						salesInformation = clientName + "/salesInformation-" + clientCode+".txt"
-						taxReceipt = clientName + "/taxReceipt-" + clientCode+".txt"
+						salesInformation = clientName + "/informação-venda-" + clientCode+".txt"
+						taxReceipt = clientName + "/cupom-fiscal-" + clientCode+".txt"
 						idFile = arc.abrir_arquivo(identificationFile, arc.MODO_ESCRITA)
 						arc.fechar_arquivo(idFile)
 						salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ACRESCENTAR)
@@ -212,7 +213,7 @@ programa
 		}
 	}
 	
-	//	Função para imprimir HEADER DO SISTEMA (DESIGN)
+	//	Funﾃｧﾃ｣o para imprimir HEADER DO SISTEMA (DESIGN)
 	funcao vazio print_header(){
 		escreva(" _________________________________\n")
 		escreva("|         Padoca PÃO QUENTE       |\n")
@@ -223,17 +224,17 @@ programa
 		escreva("|            Padoca PÃO QUENTE           |\n")
 	}
 
-	//	Função para imprimir linha (DESIGN)
+	//	Funﾃｧﾃ｣o para imprimir linha (DESIGN)
 	funcao vazio print_line(){
 		escreva(" ---------------------------------\n")
 	}
 
-	//	Função para imprimir linha nas opções de interações (DESIGN)
+	//	Funﾃｧﾃ｣o para imprimir linha nas opﾃｧﾃｵes de interaﾃｧﾃｵes (DESIGN)
 	funcao vazio print_line_4_options(){
 		escreva(" ----------------------------------------\n")
 	}
 
-	//	Função para imprimir a tela de cadastro dos produtos (DESIGN)
+	//	Funﾃｧﾃ｣o para imprimir a tela de cadastro dos produtos (DESIGN)
 	funcao vazio print_resgistration_screen(){
 		print_header_functions_screen()
 		print_line_4_options()
@@ -241,7 +242,7 @@ programa
 		print_line_4_options()
 	}
 
-	//	Função para imprimir a tela de venda dos produtos (DESIGN)
+	//	Funﾃｧﾃ｣o para imprimir a tela de venda dos produtos (DESIGN)
 	funcao vazio print_sales_screen(){
 		print_header_functions_screen()
 		print_line_4_options()
@@ -249,14 +250,18 @@ programa
 		print_line_4_options()
 	}
 
-	//	Função para imprimir produtos vendidos (DESIGN)
+	//	Funﾃｧﾃ｣o para imprimir produtos vendidos (DESIGN)
 	funcao vazio print_products(){
-		print_line_4_options()
-		escreva("| Item | Código | Descrição|             |\n")
+		escreva("| Item | Código | Est. | Descrição       |\n")
 		print_line_4_options()
 		para(inteiro i = 0; i< contador; i++){
-			escreva("|  ",(i+1),"   |   ",codigoProduto[i],"  | ")
-			escreva(nomeProduto[i])
+			se(tx.numero_caracteres(ty.inteiro_para_cadeia(estoqueProduto[i],10))<=2){
+				escreva("|  ",(i+1),"   |   ",codigoProduto[i],"  |  ",estoqueProduto[i],"  | ")
+				escreva(nomeProduto[i])
+			}senao{
+				escreva("|  ",(i+1),"   |   ",codigoProduto[i],"  | ",estoqueProduto[i],"  | ")
+				escreva(nomeProduto[i])
+			}
 			escreva("\n")
 		}
 		print_line_4_options()
@@ -310,7 +315,7 @@ programa
 		escreva("R$ ")
 	}
 
-	//	Funcao para imprimir a requisicao do codigo do produto desejado (DESIGN e INTERAÇÃO)
+	//	Funcao para imprimir a requisicao do codigo do produto desejado (DESIGN e INTERAﾃ�ﾃグ)
 	funcao vazio print_sales_product_code_request(){
 		escreva("| Informe o código do produto desejado   |\n")
 		print_line_4_options()
@@ -344,229 +349,57 @@ programa
 	funcao vazio print_checkout_text() {
 		escreva("\n")
 		print_line_4_options()
-		escreva("|      Deseja finalizar (S/N)?      | \n")
+		escreva("| Ir para pagamento (S/N)?               |\n: ")
 		print_line_4_options()
-		escreva(": ")
 			leia(makeSale)
 	}
 
 	funcao vazio print_new_sale_text(){
-		escreva("| Deseja realizar nova venda(S/N)? ")
+		print_line_4_options()
+		escreva("| Deseja realizar nova venda(S/N)?\n: ")
 			leia(newSale)
+		print_line_4_options()
 	}
 
 	// FUNCIONALIDADE EM CONSTRUCAO (FUNCIONALIDADE COM BUG)
-	//	Funﾃｧﾃ｣o de impressﾃ｣o do cumpom fiscal
+	//	Função de impressção do cumpom fiscal
 	funcao vazio print_tax_coupon(){
-		escreva("	           PADOCA PÃO QUENTE LTDA.\n\nQuadra 1005 Sul Alameda 23 - Plano Diretor Sul"
-			+ "77.018-530\nPalmas-TO CNPJ: 15.688.333/0001-22\nIE: 776537563 IM: ISENTO"
-			+"\n==========================================================="
-			+"\nCÓDIGO: "+clientCode+"\n"+obtainingTimetable()
-			+"\n==========================================================="
-			+"\n	             CUPOM SEM VALOR FISCAL"
-			+"\n==========================================================="
-			+"\n| DESCRIÇÃO..........| VL. UN. (R$) | QTD |  VL. TL. (R$) |")
-			para(inteiro i = 0; i < productAdded; i++){
-				se(tx.numero_caracteres(nomeProduto[i]) == 3){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) <4){
-						se(tx.numero_caracteres(saleSummary[3]) < 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 4){
-								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" |   "+saleSummary[3]+" |            "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" |   "+saleSummary[3]+" |           "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" |   "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-						senao se(tx.numero_caracteres(saleSummary[3]) == 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 4){
-								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" |  "+saleSummary[3]+" |           "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-						senao se(tx.numero_caracteres(saleSummary[3]) == 3){
-							se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |          "+saleSummary[2]+" | "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-					}
-
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) <5){
-						se(tx.numero_caracteres(saleSummary[3]) < 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 4){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |   "+saleSummary[3]+" |            "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |   "+saleSummary[3]+" |           "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |   "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-						senao se(tx.numero_caracteres(saleSummary[3]) == 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 4){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |  "+saleSummary[3]+" |           "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-						senao se(tx.numero_caracteres(saleSummary[3]) == 3){
-							se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" | "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-					}
-
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) <6){
-						se(tx.numero_caracteres(saleSummary[3]) < 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 4){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |   "+saleSummary[3]+" |            "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |   "+saleSummary[3]+" |           "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |   "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-						senao se(tx.numero_caracteres(saleSummary[3]) == 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 4){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |  "+saleSummary[3]+" |           "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-						senao se(tx.numero_caracteres(saleSummary[3]) == 3){
-							se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" | "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 7){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" | "+saleSummary[3]+" |         "+saleSummary[4]+"|")
-							}
-						}
-					}
-				}
-
-				se(tx.numero_caracteres(nomeProduto[i]) == 4){
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) == 3){
-						se(tx.numero_caracteres(saleSummary[3]) < 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 4){
-								escreva("\n| "+saleSummary[1]+"               |          "+saleSummary[2]+" |   "+saleSummary[3]+" |            "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-								escreva("\n| "+saleSummary[1]+"               |          "+saleSummary[2]+" |   "+saleSummary[3]+" |           "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"               |          "+saleSummary[2]+" |   "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-						senao se(tx.numero_caracteres(saleSummary[3]) == 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 4){
-								escreva("\n| "+saleSummary[1]+"             |          "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-								escreva("\n| "+saleSummary[1]+"             |          "+saleSummary[2]+" |  "+saleSummary[3]+" |           "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"             |          "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-						senao se(tx.numero_caracteres(saleSummary[3]) > 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"             |          "+saleSummary[2]+" | "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-					}
-
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) == 4){
-						se(tx.numero_caracteres(saleSummary[3]) < 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 4){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |   "+saleSummary[3]+" |            "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |   "+saleSummary[3]+" |           "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |   "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-						senao se(tx.numero_caracteres(saleSummary[3]) == 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 4){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |  "+saleSummary[3]+" |           "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-						senao se(tx.numero_caracteres(saleSummary[3]) == 3){
-							se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |         "+saleSummary[2]+" | "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-					}
-
-					se(tx.numero_caracteres(ty.real_para_cadeia(valorProduto[i])) == 5){
-						se(tx.numero_caracteres(saleSummary[3]) < 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 4){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |   "+saleSummary[3]+" |            "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |   "+saleSummary[3]+" |           "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |   "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-						senao se(tx.numero_caracteres(saleSummary[3]) == 2){
-							se(tx.numero_caracteres(saleSummary[4]) < 4){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |  "+saleSummary[3]+" |           "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" |  "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}
-						}
-						senao se(tx.numero_caracteres(saleSummary[3]) == 3){
-							se(tx.numero_caracteres(saleSummary[4]) < 6){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" | "+saleSummary[3]+" |          "+saleSummary[4]+"|")
-							}senao se(tx.numero_caracteres(saleSummary[4]) < 7){
-								escreva("\n| "+saleSummary[1]+"                |        "+saleSummary[2]+" | "+saleSummary[3]+" |         "+saleSummary[4]+"|")
-							}
-						}
-					}
-				}
-
-			}// Fim loop
-			escreva("\n================================================")
-			se(tx.numero_caracteres(ty.real_para_cadeia(valor)) < 4){
-					escreva("\n|TOTAL                                 R$  "+valor+"0|")
-			}senao se(tx.numero_caracteres(ty.real_para_cadeia(valor)) < 5){
-				escreva("\n|TOTAL                                 R$  "+valor+"|")
-			}senao se(tx.numero_caracteres(ty.real_para_cadeia(valor)) < 6){
-				escreva("\n|TOTAL                                 R$ "+valor+"|")
-			}senao se(tx.numero_caracteres(ty.real_para_cadeia(valor)) < 7){
-				escreva("\n|TOTAL                                R$ "+valor+"|")
-			}senao se(tx.numero_caracteres(ty.real_para_cadeia(valor)) < 8){
-				escreva("\n|TOTAL                               R$ "+valor+"|")
-			}senao se(tx.numero_caracteres(ty.real_para_cadeia(valor)) < 9){
-				escreva("\n|TOTAL                              R$ "+valor+"|")
-			}
-
-			se(tx.numero_caracteres(saleSummary[4]) < 4){
-					escreva("\n|FORMA DE PAGAMENTO                    R$  "+saleSummary[4]+"0|")
-			}senao se(tx.numero_caracteres(saleSummary[4]) < 5){
-				escreva("\n|FORMA DE PAGAMENTO                    R$  "+saleSummary[4]+"|")
-			}senao se(tx.numero_caracteres(saleSummary[4]) < 6){
-				escreva("\n|FORMA DE PAGAMENTO                   R$  "+saleSummary[4]+"|")
-			}senao se(tx.numero_caracteres(saleSummary[4]) < 7){
-				escreva("\n|FORMA DE PAGAMENTO                  R$  "+saleSummary[4]+"|")
-			}senao se(tx.numero_caracteres(saleSummary[4]) < 8){
-				escreva("\n|FORMA DE PAGAMENTO                 R$  "+saleSummary[4]+"|")
-			}senao se(tx.numero_caracteres(saleSummary[4]) < 9){
-				escreva("\n|FORMA DE PAGAMENTO                R$  "+saleSummary[4]+"|")
-			}
-			escreva("\n================================================"
-			+"\n|Impostos:                                     |"
-			+"\n|Imposto é roubo!                              |"
-			+"\n|                                              |"
-			+"\n|                                              |"
-			+"\n================================================"
-			+"\n         VÃO PELA SOMBRA E VOLTE SEMPRE!!         \n")
+		taxArchive = arc.abrir_arquivo(taxReceipt, arc.MODO_ACRESCENTAR)
+		arc.escrever_linha("	           PADOCA PÃO QUENTE LTDA.",taxArchive)
+		arc.escrever_linha("",taxArchive)
+		arc.escrever_linha("Quadra 1005 Sul Alameda 23 - Plano Diretor Sul 77.018-530",taxArchive)
+		arc.escrever_linha("Palmas-TO CNPJ: 15.688.333/0001-22",taxArchive)
+		arc.escrever_linha("IE: 776537563 IM: ISENTO",taxArchive)
+		arc.escrever_linha("\n===========================================================",taxArchive)
+		arc.escrever_linha("CÓDIGO: "+clientCode,taxArchive)
+		arc.escrever_linha(obtainingTimetable(),taxArchive)
+		arc.escrever_linha("===========================================================",taxArchive)
+		arc.escrever_linha("\n	             CUPOM SEM VALOR FISCAL",taxArchive)
+		arc.escrever_linha("\n===========================================================",taxArchive)
+		arc.escrever_linha("\n| DESCRIÇÃO..........| VL. UN. (R$) | QTD |  VL. TL. (R$) |",taxArchive)
+		arc.fechar_arquivo(taxArchive)
+		taxArchive = arc.abrir_arquivo(taxReceipt, arc.MODO_ACRESCENTAR)
+		para(inteiro i = 0; i < produtoQuantidade; i++){
+			taxReceiptText = "\n| "+carrinhoCompra[i][0]+"   -   "
+			+carrinhoCompra[i][1]
+			+"   -   "+carrinhoCompra[i][2]
+			+"   -   "
+			+carrinhoCompra[i][3]+"|"
+			arc.escrever_linha(taxReceiptText, taxArchive)
+		}
+		arc.fechar_arquivo(taxArchive)
+		taxArchive = arc.abrir_arquivo(taxReceipt, arc.MODO_ACRESCENTAR)
+		arc.escrever_linha("===========================================================", taxArchive)
+		arc.escrever_linha("|TOTAL                                        R$  "+valorVendaRealizada, taxArchive)
+		arc.escrever_linha("|"+metodoPagamentoTexto+"                              R$  "+valorVendaRealizada, taxArchive)
+		arc.escrever_linha("===========================================================", taxArchive)
+		arc.escrever_linha("|Impostos:                                                |", taxArchive)
+		arc.escrever_linha("|Imposto é roubo!                                         |", taxArchive)
+		arc.escrever_linha("|                                                         |", taxArchive)
+		arc.escrever_linha("|                                                         |", taxArchive)
+		arc.escrever_linha("===========================================================", taxArchive)
+		arc.escrever_linha("              VÁ PELA SOMBRA E VOLTE SEMPRE!!         ", taxArchive)
+		arc.fechar_arquivo(taxArchive)
 	}
 	
 	//	Funcao que mostra o menu para o usuario e retorna a opcao selecionada do mesmo. (DESIGN E INTERACAO)
@@ -583,7 +416,7 @@ programa
 			limpa()
 			print_header()
 			print_line()
-			escreva("| OPÇÃO INVÁIDA!                 |\n")
+			escreva("| OPÇÃO INVÁLIDA!                 |\n")
 			escreva("| Escolha uma opção válida abaixo |")
 			escreva("\n")
 			print_line()
@@ -597,12 +430,50 @@ programa
 
 	funcao vazio method_payment_screen(){
 		print_method_payment_screen()
+		inteiro c = 0
 		escolha(metodoPagamento){
 			caso 1:
-			
+				print_line_4_options()
+				escreva(" [1]-Crédito \n [2]-Débito")
+				escreva("\n: ")
+					leia(c)
+				enquanto(c<1 e c>2){
+					escreva("Escolha um opção válida: ")
+						leia(c)
+				}
+				escolha(c){
+					caso 1:
+						metodoPagamentoTexto = "Cartão CRÉDITO"
+					pare
+					caso 2:
+						metodoPagamentoTexto = "Cartão DÉBITO"
+					pare
+				}
 			pare
 			caso 2:
-				
+				c = 0
+				print_line_4_options()
+				escreva(" [1]-Dinheiro \n [2]-Pix")
+				escreva("\n: ")
+					leia(c)
+				enquanto(c<1 e c>2){
+					escreva("Escolha um opção válida: ")
+						leia(c)
+				}
+				escolha(c){
+					caso 1:
+						metodoPagamentoTexto = "DINHEIRO"
+						se(valorVendaRealizada > 50000.0){
+							valorVendaRealizada -= (valorVendaRealizada*0.1)
+						}
+					pare
+					caso 2:
+						metodoPagamentoTexto = "PIX"
+						se(valorVendaRealizada > 50000.0){
+							valorVendaRealizada -= (valorVendaRealizada*0.1)
+						}
+					pare
+				}
 			pare
 		}
 	}
@@ -660,7 +531,7 @@ programa
 		arc.fechar_arquivo(archiveStock)
 	}
 	
-	// FUNCIONALIDADE EM CONSTRUÇÃO
+	// FUNCIONALIDADE EM CONSTRUCAO
 	funcao vazio saleSystem(inteiro retiradaEstoque, inteiro estoqueVenda){
 		inteiro itemAddition = 1
 		para(inteiro i = 0; i < arraySize; i++){
@@ -688,12 +559,20 @@ programa
 					}
 					auxiliar = 0
 				}
+				carrinhoCompra[productPosition][0] = nomeProduto[i]
+				carrinhoCompra[productPosition][1] = ty.real_para_cadeia(valorProduto[i])
+				carrinhoCompra[productPosition][2] = ty.inteiro_para_cadeia(retiradaEstoque, 10)
+				carrinhoCompra[productPosition][3] = ty.real_para_cadeia(math.arredondar(valorProduto[i]*retiradaEstoque,2))
+
 				saleSummary[0] = ty.inteiro_para_cadeia(codigoVenda, 10)
 				saleSummary[1] = nomeProduto[i]
 				saleSummary[2] = ty.real_para_cadeia(valorProduto[i])
 				saleSummary[3] = ty.inteiro_para_cadeia(retiradaEstoque, 10)
 				saleSummary[4] = ty.real_para_cadeia(math.arredondar(valorProduto[i]*retiradaEstoque,2))
+				
 				productAdded++
+				productPosition++
+				produtoQuantidade++
 				valorVendaRealizada+=math.arredondar(valorProduto[i]*retiradaEstoque,2)
 			}
 		}
@@ -709,7 +588,7 @@ programa
 		arc.fechar_arquivo(salesArchive)
 	}
 
-	// 	Função de gravação dos itens comprados no arquivo resumo da compra
+	// 	Funﾃｧﾃ｣o de gravaﾃｧﾃ｣o dos itens comprados no arquivo resumo da compra
 	funcao vazio recording_purchase_data(){
 		salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ACRESCENTAR)
 		saleSummaryText = "Código: "+saleSummary[0]+", Produto: "+saleSummary[1]
@@ -717,8 +596,16 @@ programa
 		+", Valor Total R$: "+saleSummary[4]
 		arc.escrever_linha(saleSummaryText, salesArchive)
 	}
+
+	funcao vazio purchase_record_DB(){
+		salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ACRESCENTAR)
+		saleSummaryText = "Código: "+saleSummary[0]+", Produto: "+saleSummary[1]
+		+", Valor Un.: R$ "+saleSummary[2]+", Qtd. Vend.: "+saleSummary[3]
+		+", Valor Total R$: "+saleSummary[4]
+		arc.escrever_linha(saleSummaryText, salesArchive)
+	}
 	
-	//	Funcao de verificação da existencia da DB de venda ao reiniciar o sistema
+	//	Funcao de verificaﾃｧﾃ｣o da existencia da DB de venda ao reiniciar o sistema
 	funcao vazio fileExist(){
 		logico fileExist = arc.arquivo_existe(identificationFile)
 		enquanto(fileExist == verdadeiro){
@@ -752,8 +639,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 13180; 
- * @DOBRAMENTO-CODIGO = [215, 220, 226, 231, 236, 244, 252, 265, 277, 286, 295, 304, 343, 352];
+ * @POSICAO-CURSOR = 22617; 
+ * @DOBRAMENTO-CODIGO = [216, 221, 227, 232, 237, 270, 282, 291, 300, 309, 318, 325, 348, 356, 365, 405, 430, 481, 488, 534, 608, 619, 631];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
