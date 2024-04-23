@@ -32,7 +32,7 @@ programa
 	
 	
 	//	Contantes que contem os caminhos dos bancos de dados.
-	/*const cadeia codeDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productCodeDB.txt"
+	const cadeia codeDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productCodeDB.txt"
 	const cadeia nameDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productNameDB.txt"
 	const cadeia stockDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productStockDB.txt"
 	const cadeia valueDB = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/productValueDB.txt"
@@ -41,9 +41,9 @@ programa
 	const cadeia codeSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/codeProductsSale.txt"
 	const cadeia productSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/productsSale.txt"
 	const cadeia valueSale = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/valueProductsSale.txt"
-	const cadeia salesDBDirectory = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/"*/
+	const cadeia salesDBDirectory = "C:/Users/Aluno/Documents/aluno1/ProjetoPadaria/database/saleDB/"
 	
-	const cadeia codeDB = "D:/documents/senai/ProjetoPadaria/database/productCodeDB.txt"
+	/*const cadeia codeDB = "D:/documents/senai/ProjetoPadaria/database/productCodeDB.txt"
 	const cadeia nameDB = "D:/documents/senai/ProjetoPadaria/database/productNameDB.txt"
 	const cadeia stockDB = "D:/documents/senai/ProjetoPadaria/database/productStockDB.txt"
 	const cadeia valueDB = "D:/documents/senai/ProjetoPadaria/database/productValueDB.txt"
@@ -52,7 +52,7 @@ programa
 	const cadeia nameSale = "D:/documents/senai/ProjetoPadaria/database/saleDB/ProductsSale.txt"
 	const cadeia valueSale = "D:/documents/senai/ProjetoPadaria/database/saleDB/valueProductsSale.txt"
 	const cadeia salesDBDirectory = "D:/documents/senai/ProjetoPadaria/database/saleDB/"
-	const cadeia salesReportDir = "D:/documents/senai/ProjetoPadaria/database/salesReport/salesReport.txt"
+	const cadeia salesReportDir = "D:/documents/senai/ProjetoPadaria/database/salesReport/salesReport.txt"*/
 	
 	
 
@@ -586,7 +586,8 @@ programa
 				saleSummary[2] = ty.real_para_cadeia(valorProduto[i])
 				saleSummary[3] = ty.inteiro_para_cadeia(retiradaEstoque, 10)
 				saleSummary[4] = ty.real_para_cadeia(totalVenda)
-				
+
+				valorVendaRealizada =totalVenda
 				productAdded++
 				productPosition++
 				produtoQuantidade++
@@ -649,8 +650,7 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 21309; 
- * @DOBRAMENTO-CODIGO = [220, 225, 231, 236, 241, 249, 257, 274, 286, 295, 304, 313, 322, 329, 352, 360, 374, 414, 439, 490];
+ * @POSICAO-CURSOR = 22246; 
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = {totalDia, 548, 38, 8};
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
