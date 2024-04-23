@@ -1,4 +1,0 @@
-Código: 123, Produto: Bolo de Fubá, Valor Un.: R$ 13.5, Qtd. Vend.: 5, Valor Total R$: 67.5
-Código: 125, Produto: Pão de Sal, Valor Un.: R$ 0.35, Qtd. Vend.: 35, Valor Total R$: 12.25
-Código: 127, Produto: Salgado, Valor Un.: R$ 7.5, Qtd. Vend.: 5, Valor Total R$: 37.5
-117.25

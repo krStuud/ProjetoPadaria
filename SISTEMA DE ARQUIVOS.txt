@@ -1,8 +1,0 @@
-**SISTEMA DE ARQUIVOS**
-Clinte(Nº)
-|	ARQ-INFO
-|	|	Código da venda
-|	|	Data e horario da venda (IMPLEMENTAÇÃO FUTURA)
-|	|	CÓDIGOS DOS PRODUTOS + NOMES + VALORES
-|	|	Tipo de pagamento
-|	|	Valor total da compra

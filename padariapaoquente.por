@@ -9,19 +9,19 @@ programa
 	inclua biblioteca Util --> utl
 
 	//	Variaveis globais usadas para a manipulacao e alocacao "permanente" de dados.
-	inteiro estoqueProduto[9999], codigoProduto[9999],
+	inteiro estoqueProduto[50], codigoProduto[50],
 	arraySize = utl.numero_elementos(codigoProduto)/*	Variavel auxiliar 
 					que guarda o tamanho do vetor*/
-	cadeia nomeProduto[9999]
-	real valorProduto[9999], custoProduto[9999]
+	cadeia nomeProduto[50]
+	real valorProduto[50], custoProduto[50]
 	
 	//	Variaveis globais usadas para a manipulacao e alocaﾃｧﾃ｣o temporﾃ｡ria de dados.
-	cadeia textArchive, nome, clientName = "", salesInformation = "", taxReceipt = "",taxReceiptText = "", saleSummary[5], saleSummaryText = "",
-	carrinhoCompra[50][4]
+	cadeia textArchive, nome, clientName = "", salesInformation = "", taxReceipt = "",taxReceiptText = "", saleSummary[5],  
+	saleSummaryText = "", carrinhoCompra[50][4],salesReportText = ""
 	inteiro menuOption = 0, estoque, codigo = 0,  contador = 1, quantidadeOperacoes = 0, archiveCode,
 	archiveStock, archiveName, archiveValue, archiveCost, salesArchive, textCode, textStock, codigoVenda, estoqueVenda = 0,
-	salesMade = 0, numCaracteres, clientCode = 0,contadorAuxiliar = 1,retiradaEstoque = 0,taxArchive
-	real textValue, textCost, valor, custo, valorVendaRealizada = 0.0, CustoV
+	salesMade = 0, numCaracteres, clientCode = 0,contadorAuxiliar = 1,retiradaEstoque = 0,taxArchive, salesReportArchive
+	real textValue, textCost, valor, custo, valorVendaRealizada = 0.0
 	
 	/*	Variaveis globais de auxilio na obtencao de dados e gerenciamento de estruturas de dados
 	(data, tempo, geracao de codigos aleatorios,loops, etc...)*/
@@ -52,7 +52,7 @@ programa
 	const cadeia nameSale = "D:/documents/senai/ProjetoPadaria/database/saleDB/ProductsSale.txt"
 	const cadeia valueSale = "D:/documents/senai/ProjetoPadaria/database/saleDB/valueProductsSale.txt"
 	const cadeia salesDBDirectory = "D:/documents/senai/ProjetoPadaria/database/saleDB/"
-
+	const cadeia salesReportDir = "D:/documents/senai/ProjetoPadaria/database/salesReport/salesReport.txt"
 	
 	
 
@@ -99,8 +99,8 @@ programa
 						//	Lacao de verificacao de existencia do codigo informado pelo usuﾃ｡rio no BD
 						para(inteiro i = 0; i < arraySize; i++){
 							se(codigoProduto[i] == codigo){
-								escreva("Este cﾃｳdigo jﾃ｡�ｽ｡ se encontra cadastrado,"
-								+ "informe um novo cﾃｳdigo\n: ")
+								escreva("Este código já se encontra cadastrado,"
+								+ "informe um novo código\n: ")
 									leia(codigo)
 								i--
 							}
@@ -126,7 +126,7 @@ programa
 					//	La�ｾ�ｽｧo de verificacao de existencia do produto informado pelo usuario no BD
 					para(inteiro i = 0; i < arraySize; i++){
 						se(nomeProduto[i] == nome){
-							escreva("Este produto jﾃ｡ existe no sistema,"
+							escreva("Este produto já existe no sistema,"
 							+ "informe um novo produto\n: ")
 								leia(nome)
 							i--
@@ -156,8 +156,8 @@ programa
 					print_cost_request_option()
 						leia(custo)
 					textArchive = ty.real_para_cadeia(custo)
-					arc.escrever_linha(textArchive, archiveCost)
-
+					arc.escrever_linha(textArchive, archiveCost)				
+					
 					//	Funﾃｧﾃ｣o que verifica se o usuario quer realizar um novo cadastro
 					continuar = continuityCheck(continuar)
 					limpa()
@@ -185,9 +185,12 @@ programa
 					faca{
 						salesInformation = clientName + "/informação-venda-" + clientCode+".txt"
 						taxReceipt = clientName + "/cupom-fiscal-" + clientCode+".txt"
+						
 						idFile = arc.abrir_arquivo(identificationFile, arc.MODO_ESCRITA)
 						arc.fechar_arquivo(idFile)
+						
 						salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ACRESCENTAR)
+						
 						print_products()
 						print_sales_product_code_request()
 						saleSystem(retiradaEstoque, estoqueVenda)
@@ -195,6 +198,7 @@ programa
 						// FUNCIONALIDADE EM CONSTRUÇÃO
 						recording_purchase_data()
 						print_checkout_text()
+					
 						arc.fechar_arquivo(salesArchive)
 						limpa()
 					}enquanto(makeSale != 's' e makeSale != 'S')
@@ -361,7 +365,12 @@ programa
 		print_line_4_options()
 	}
 
-	// FUNCIONALIDADE EM CONSTRUCAO (FUNCIONALIDADE COM BUG)
+	funcao vazio print_report(){
+		salesReportText = "========================================================================================================"	
+		salesReportText = "\n| Código | Descrição      | Vl.Un. R$ | Custo Prod. R$| Qtd. Est. | Qtd. Venda | Vl. Venda | Lucro Dia |"
+		salesReportText = "\n========================================================================================================"
+	}
+	
 	//	Função de impressção do cumpom fiscal
 	funcao vazio print_tax_coupon(){
 		taxArchive = arc.abrir_arquivo(taxReceipt, arc.MODO_ACRESCENTAR)
@@ -493,8 +502,10 @@ programa
 		archiveValue = arc.abrir_arquivo(valueDB,arc.MODO_LEITURA)
 		archiveCost = arc.abrir_arquivo(costDB,arc.MODO_LEITURA)
 		archiveStock = arc.abrir_arquivo(stockDB,arc.MODO_LEITURA)
+		
 		quantidadeOperacoes = 0
 		contador = 0
+		
 		para(inteiro i = 0; i < arraySize; i++){
 			textArchive = arc.ler_linha(archiveCode)
 			se (ty.cadeia_e_inteiro(textArchive, 10) == verdadeiro){
@@ -510,11 +521,10 @@ programa
 			se(numCaracteres>0){
 				nomeProduto[i] = textArchive
 			}
-			
 			textArchive = arc.ler_linha(archiveStock)
 			se (ty.cadeia_e_inteiro(textArchive, 10) == verdadeiro){
 				textStock = ty.cadeia_para_inteiro(textArchive, 10)
-				estoqueProduto[i] = textStock
+				estoqueProduto[i] = textStock 
 			}
 			
 			textArchive = arc.ler_linha(archiveValue)
@@ -527,13 +537,15 @@ programa
 				textCost = ty.cadeia_para_real(textArchive)
 				custoProduto[i] = textCost
 			}
+
 		}
 		arc.fechar_arquivo(archiveStock)
 	}
 	
 	// FUNCIONALIDADE EM CONSTRUCAO
 	funcao vazio saleSystem(inteiro retiradaEstoque, inteiro estoqueVenda){
-		inteiro itemAddition = 1
+		inteiro itemAddition = 1, acumuladoVenda = 0
+		real totalVenda = 0.0, lucro = 0.0, totalDia = 0.0
 		para(inteiro i = 0; i < arraySize; i++){
 			se(codigoProduto[i]==codigoVenda){
 				escreva("|         Informe a quantidade           |\n")
@@ -553,27 +565,31 @@ programa
 					se(estoqueProduto[i] < 0){
 						escreva("| Não foi possível realizar a adição do  |\n")
 						escreva("| item! Quantidade solicitada insponível |\n| em estoque!")
+						estoqueProduto[i] = auxiliar + retiradaEstoque
 						estoqueVenda = estoqueVenda
 					}senao{
 						estoqueVenda = estoqueProduto[i]
 					}
 					auxiliar = 0
 				}
+
+				totalVenda = math.arredondar(valorProduto[i]*retiradaEstoque,2)
+				totalDia += totalVenda
+				
 				carrinhoCompra[productPosition][0] = nomeProduto[i]
 				carrinhoCompra[productPosition][1] = ty.real_para_cadeia(valorProduto[i])
 				carrinhoCompra[productPosition][2] = ty.inteiro_para_cadeia(retiradaEstoque, 10)
-				carrinhoCompra[productPosition][3] = ty.real_para_cadeia(math.arredondar(valorProduto[i]*retiradaEstoque,2))
+				carrinhoCompra[productPosition][3] = ty.real_para_cadeia(totalVenda)
 
 				saleSummary[0] = ty.inteiro_para_cadeia(codigoVenda, 10)
 				saleSummary[1] = nomeProduto[i]
 				saleSummary[2] = ty.real_para_cadeia(valorProduto[i])
 				saleSummary[3] = ty.inteiro_para_cadeia(retiradaEstoque, 10)
-				saleSummary[4] = ty.real_para_cadeia(math.arredondar(valorProduto[i]*retiradaEstoque,2))
+				saleSummary[4] = ty.real_para_cadeia(totalVenda)
 				
 				productAdded++
 				productPosition++
 				produtoQuantidade++
-				valorVendaRealizada+=math.arredondar(valorProduto[i]*retiradaEstoque,2)
 			}
 		}
 		
@@ -590,19 +606,13 @@ programa
 
 	// 	Funﾃｧﾃ｣o de gravaﾃｧﾃ｣o dos itens comprados no arquivo resumo da compra
 	funcao vazio recording_purchase_data(){
+		inteiro quantidadeItens = 0
 		salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ACRESCENTAR)
 		saleSummaryText = "Código: "+saleSummary[0]+", Produto: "+saleSummary[1]
 		+", Valor Un.: R$ "+saleSummary[2]+", Qtd. Vend.: "+saleSummary[3]
 		+", Valor Total R$: "+saleSummary[4]
 		arc.escrever_linha(saleSummaryText, salesArchive)
-	}
-
-	funcao vazio purchase_record_DB(){
-		salesArchive = arc.abrir_arquivo(salesInformation, arc.MODO_ACRESCENTAR)
-		saleSummaryText = "Código: "+saleSummary[0]+", Produto: "+saleSummary[1]
-		+", Valor Un.: R$ "+saleSummary[2]+", Qtd. Vend.: "+saleSummary[3]
-		+", Valor Total R$: "+saleSummary[4]
-		arc.escrever_linha(saleSummaryText, salesArchive)
+		
 	}
 	
 	//	Funcao de verificaﾃｧﾃ｣o da existencia da DB de venda ao reiniciar o sistema
@@ -639,10 +649,10 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 22617; 
- * @DOBRAMENTO-CODIGO = [216, 221, 227, 232, 237, 270, 282, 291, 300, 309, 318, 325, 348, 356, 365, 405, 430, 481, 488, 534, 608, 619, 631];
+ * @POSICAO-CURSOR = 21309; 
+ * @DOBRAMENTO-CODIGO = [220, 225, 231, 236, 241, 249, 257, 274, 286, 295, 304, 313, 322, 329, 352, 360, 374, 414, 439, 490];
  * @PONTOS-DE-PARADA = ;
- * @SIMBOLOS-INSPECIONADOS = ;
+ * @SIMBOLOS-INSPECIONADOS = {totalDia, 548, 38, 8};
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
  * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */
